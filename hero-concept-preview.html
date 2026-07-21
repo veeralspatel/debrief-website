@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero concept preview — not part of the live site</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  /* Preview-only styles. Nothing here touches the real site's stylesheet. */
+  body { padding-bottom: 80px; }
+  .preview-label {
+    font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--t3); padding: 24px 0 0; text-align: center;
+  }
+  .preview-note {
+    font-size: 12.5px; color: var(--t4); text-align: center; max-width: 560px; margin: 4px auto 0;
+  }
+  .preview-divider { border-top: 1px dashed var(--bd); margin: 48px 0 0; }
+
+  /* --- Variant D: FINAL v3 spec. Idle button -> click -> live recording, waveform
+     spawns at a fixed playhead and pushes left, fades out before the text column. --- */
+  .hero-grid-d {
+    display: grid; grid-template-columns: minmax(0, 460px) 1fr; gap: 48px; align-items: center;
+  }
+  .hero-anim-col { position: relative; display: flex; flex-direction: column; gap: 28px; }
+  /* Dimmed as a whole so the headline stays the front runner, this is ambient, not the focus. */
+  .hero-wave-band { position: relative; height: 130px; opacity: 0.5; }
+  .hero-wave-bars {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; align-items: center; gap: 4px; overflow: hidden;
+  }
+  .hero-wave-bars i {
+    display: block; width: 5px; flex-shrink: 0; border-radius: 3px; background: var(--red);
+    height: 100px; transform: scaleY(0.03); opacity: 1;
+    transition: transform 110ms ease, opacity 110ms ease;
+  }
+  .hero-playhead {
+    position: absolute; top: 0; left: 75%; height: 100%; width: 2px;
+    background: var(--blue); box-shadow: 0 0 5px rgba(10,132,255,0.4);
+  }
+  .hero-anim-card-wrap { position: relative; height: 96px; }
+  .hero-anim-card {
+    position: absolute; left: 75%; transform: translateX(-50%); width: 100%; max-width: 240px;
+    background: var(--s2); border: 1px solid var(--bd); border-radius: 14px;
+    padding: 18px 20px; display: flex; align-items: center; gap: 16px;
+  }
+  .had-btn {
+    width: 40px; height: 40px; border-radius: 50%; background: #2E2E32;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 400ms ease;
+  }
+  .had-btn::after { content: ''; width: 14px; height: 14px; border-radius: 50%; background: #6C6C70; transition: background 400ms ease; }
+  .had-btn.live { background: var(--red); }
+  .had-btn.live::after { background: #fff; }
+  .had-timer { font-family: var(--mono); font-size: 15px; color: var(--t3); transition: color 400ms ease; }
+  .had-timer.live { color: var(--t); }
+  .had-status { font-family: var(--mono); font-size: 9.5px; color: var(--t4); margin-left: auto; text-align: right; line-height: 1.7; }
+  .had-status .on { color: var(--green); }
+
+  @media (max-width: 1023px) {
+    .hero-grid-d { grid-template-columns: 1fr; }
+    .hero-anim-col { margin-top: 8px; }
+  }
+
+  /* --- Variant C: live scrolling waveform across the top, text layered on top --- */
+  .hero-fullbleed { position: relative; overflow: hidden; padding-top: 0; }
+  .hb-wave-band {
+    position: absolute; top: 0; left: 0; right: 0; height: 160px;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    z-index: 0;
+  }
+  .hb-wave-band i {
+    display: block; width: 5px; border-radius: 3px; background: var(--red);
+    height: 130px; opacity: 0.9; transform: scaleY(0.05);
+    transition: transform 110ms ease;
+  }
+  /* The live "record head": incoming audio is flat (nothing captured yet) to its right,
+     the real waveform reveals and trails off to the left once it crosses this point. */
+  .hb-live-bar {
+    position: absolute; top: 0; height: 160px; left: 80%;
+    width: 2px; background: var(--blue); z-index: 1;
+    box-shadow: 0 0 8px rgba(10,132,255,0.6);
+  }
+  /* Scrim: guarantees the headline stays readable regardless of what the bars are doing
+     behind it, darkest right where the text sits, fading out toward the edges of the band. */
+  .hb-scrim {
+    position: absolute; top: 0; left: 0; right: 0; height: 160px;
+    background: linear-gradient(to bottom, rgba(10,10,11,0.78) 0%, rgba(10,10,11,0.55) 45%, rgba(10,10,11,0.15) 75%, transparent 100%);
+    z-index: 2; pointer-events: none;
+  }
+  .hb-content {
+    position: relative; z-index: 3;
+    padding-top: 64px; padding-bottom: 56px;
+  }
+  .hb-card-row { margin-top: 40px; display: flex; }
+  .hb-card-row .fragment { max-width: 340px; padding: 20px; }
+  .hb-card-row .frag-rec-btn { width: 28px; height: 28px; }
+  .hb-card-row .frag-timer { font-size: 14px; }
+  .hb-card-row .frag-status { font-size: 9.5px; }
+  .hb-card-row .frag-line { font-size: 12px; }
+
+  @media (min-width: 1024px) {
+    .hb-wave-band { height: 190px; }
+    .hb-live-bar { height: 190px; }
+    .hb-scrim { height: 190px; }
+    .hb-content { padding-top: 92px; }
+  }
+
+  /* --- Earlier exploration, kept for reference, superseded by Variant C above --- */
+  .big-wave-box {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    height: 220px; width: 100%;
+  }
+  .big-wave-box i {
+    display: block; width: 6px; border-radius: 4px; background: var(--red);
+    height: 196px; opacity: 0.85; transform: scaleY(0.08);
+    transition: transform 140ms ease;
+  }
+  .big-wave-glow {
+    position: absolute; inset: -40px; background: radial-gradient(ellipse at center, rgba(255,59,48,0.16), transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .va-wrap { position: relative; padding: 40px 0 0; }
+  .va-card-wrap { position: relative; margin-top: -64px; margin-left: 0; max-width: 300px; z-index: 2; }
+  .va-card-wrap .fragment { padding: 18px; }
+  .va-card-wrap .frag-rec-btn { width: 26px; height: 26px; }
+  .va-card-wrap .frag-timer { font-size: 13px; }
+  .va-card-wrap .frag-status { font-size: 9px; }
+  .va-card-wrap .frag-line { font-size: 11.5px; }
+  .vb-wrap { display: flex; flex-direction: column; gap: 28px; }
+  .vb-card-wrap { max-width: 320px; }
+  .vb-card-wrap .fragment { padding: 20px; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 32px;">
+  <p style="font-family: var(--mono); font-size: 12px; color: var(--t3);">Hero concept preview, not part of the live site.</p>
+</div>
+
+<div class="preview-label">Variant D — FINAL v3: idle button -&gt; click -&gt; live waveform from a fixed playhead</div>
+<p class="preview-note">Idle for 2s (gray button, timer at 00:00), then click -&gt; red live button, MIC/SYSTEM go green, timer counts up, and bars start spawning at the blue playhead, pushing left, fading out before the text column. Runs once, then continues indefinitely.</p>
+<section class="hero" style="padding-top: 64px;">
+  <div class="container hero-grid-d">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="rec-dot" aria-hidden="true"></span>OPEN SOURCE · MAC + WINDOWS</div>
+      <h1>Press record. Everything else happens on its own.</h1>
+      <p class="lead">Debrief runs entirely on your machine. No minute caps, no upload, no account. Just the calls you actually need to remember.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#">Join the waitlist</a>
+      </div>
+    </div>
+    <div class="hero-anim-col">
+      <div class="hero-wave-band">
+        <div class="hero-wave-bars" id="hadBars"></div>
+        <div class="hero-playhead"></div>
+      </div>
+      <div class="hero-anim-card-wrap">
+        <div class="hero-anim-card">
+          <div class="had-btn" id="hadBtn"></div>
+          <div class="had-timer" id="hadTimer">00:00</div>
+          <div class="had-status" id="hadStatus">MIC <span id="hadMic">—</span><br>SYSTEM <span id="hadSys">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var narrow = window.innerWidth < 640;
+  var tickMs = narrow ? 150 : 90;
+  var edgeFadeFrac = 0.18; // last ~18% of travel fades + compresses before disappearing
+
+  var barsBox = document.getElementById('hadBars');
+  // Bar count is derived from the container's real measured width, not a guess, so bars
+  // always fill it exactly at 5px + 4px gap each, never overflow-shrunk to invisibility
+  // (this region is a column-width slice, not the full viewport, unlike other demos).
+  var BAR_W = 5, BAR_GAP = 4;
+  var count = Math.max(16, Math.floor(barsBox.getBoundingClientRect().width / (BAR_W + BAR_GAP)));
+  var bars = [];
+  for (var i = 0; i < count; i++) {
+    var bar = document.createElement('i');
+    barsBox.appendChild(bar);
+    bars.push(bar);
+  }
+  var heights = new Array(count).fill(0.03);
+  var recording = false;
+  var waveInterval = null;
+  // Playhead sits at 75% across the band. Values are computed and stored the moment
+  // they spawn at the rightmost slot, but only rendered for real once their index has
+  // shifted left past this threshold, right of it always reads as flat incoming dots.
+  var liveIndex = Math.floor(count * 0.75);
+
+  var state = 'pause';
+  var stateTicksLeft = 999; // stays "off" until recording starts
+  var voiceLevel = 0.03;
+
+  function nextVoiceLevel() {
+    stateTicksLeft--;
+    if (stateTicksLeft <= 0) {
+      if (state === 'talking') { state = 'pause'; stateTicksLeft = 6 + Math.random() * 10; }
+      else { state = 'talking'; stateTicksLeft = 14 + Math.random() * 22; }
+    }
+    if (state === 'pause') {
+      voiceLevel += (0.04 - voiceLevel) * 0.4;
+    } else {
+      var burst = Math.random() < 0.12 ? 0.25 : 0;
+      voiceLevel += (Math.random() - 0.45) * 0.3 + burst;
+      voiceLevel = Math.max(0.12, Math.min(1, voiceLevel));
+    }
+    return voiceLevel;
+  }
+
+  function render() {
+    var edgeCount = Math.max(1, Math.floor(count * edgeFadeFrac));
+    bars.forEach(function (bar, i) {
+      // still at or right of the playhead: flat incoming dot, real value not revealed yet
+      var v = (i >= liveIndex) ? 0.03 : heights[i];
+      var edgeFactor = i < edgeCount ? (i / edgeCount) : 1;
+      bar.style.transform = 'scaleY(' + (v * edgeFactor).toFixed(3) + ')';
+      bar.style.opacity = edgeFactor.toFixed(3);
+    });
+  }
+
+  function waveTick() {
+    heights.shift();
+    heights.push(recording ? nextVoiceLevel() : 0.03);
+    render();
+  }
+
+  render();
+  waveInterval = setInterval(waveTick, tickMs);
+
+  function startRecording() {
+    recording = true;
+    state = 'talking';
+    stateTicksLeft = 10 + Math.random() * 10;
+    document.getElementById('hadBtn').classList.add('live');
+    document.getElementById('hadTimer').classList.add('live');
+    document.getElementById('hadMic').textContent = 'ON';
+    document.getElementById('hadMic').className = 'on';
+    document.getElementById('hadSys').textContent = 'ON';
+    document.getElementById('hadSys').className = 'on';
+    var secs = 0;
+    setInterval(function () {
+      secs++;
+      var m = Math.floor(secs / 60), s = secs % 60;
+      document.getElementById('hadTimer').textContent =
+        (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }, 1000);
+  }
+
+  if (reduceMotion) {
+    startRecording();
+  } else {
+    setTimeout(startRecording, 2000);
+  }
+})();
+</script>
+
+<div class="preview-divider"></div>
+<div class="preview-label">Variant C — full-bleed waveform across the top, text layered on top (superseded by D above)</div>
+<p class="preview-note">Waveform spans the full width behind everything. A dark scrim sits between the waveform and the text so the headline stays legible no matter what the bars are doing. The record interface card now sits lower, fully clear of the waveform band.</p>
+<section class="hero hero-fullbleed">
+  <div class="hb-wave-band" id="waveC"></div>
+  <div class="hb-live-bar"></div>
+  <div class="hb-scrim"></div>
+  <div class="container hb-content">
+    <div class="hero-copy copy-col-hero">
+      <div class="eyebrow"><span class="rec-dot" aria-hidden="true"></span>OPEN SOURCE · MAC + WINDOWS</div>
+      <h1>Press record. Everything else happens on its own.</h1>
+      <p class="lead">Debrief runs entirely on your machine. No minute caps, no upload, no account. Just the calls you actually need to remember.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#">Join the waitlist</a>
+      </div>
+    </div>
+    <div class="hb-card-row">
+      <div class="fragment tilt fade-bottom hero-frag" data-parallax>
+        <div class="frag-rec-row">
+          <div class="frag-rec-btn" aria-hidden="true"></div>
+          <div class="frag-timer">04:12</div>
+          <div class="frag-status">MIC <span class="on">ON</span><br>SYSTEM <span class="on">ON</span></div>
+        </div>
+        <div class="frag-lines">
+          <div class="frag-line">
+            <span class="frag-time">03:58</span>
+            <span class="frag-text"><span class="frag-speaker">You</span>So walk me through where things stalled last quarter.</span>
+          </div>
+          <div class="frag-line">
+            <span class="frag-time">04:06</span>
+            <span class="frag-text"><span class="frag-speaker b">Prospect</span>Honestly, it was more of a budget timing thing than anything else.</span>
+          </div>
+          <div class="frag-line">
+            <span class="frag-time">04:12</span>
+            <span class="frag-text"><span class="frag-speaker">You</span>Got it. And if budget wasn't the constraint right now...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="preview-divider"></div>
+<div class="preview-label">Earlier exploration (superseded) — Variant A, waveform confined to right column, card overlapping</div>
+<section class="hero" style="padding-top: 40px;">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="rec-dot" aria-hidden="true"></span>OPEN SOURCE · MAC + WINDOWS</div>
+      <h1>Press record. Everything else happens on its own.</h1>
+      <p class="lead">Debrief runs entirely on your machine. No minute caps, no upload, no account. Just the calls you actually need to remember.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#">Join the waitlist</a>
+      </div>
+    </div>
+    <div class="hero-frag-wrap">
+      <div class="va-wrap">
+        <div class="big-wave-glow"></div>
+        <div class="big-wave-box" id="waveA" style="position: relative; z-index: 1;"></div>
+        <div class="va-card-wrap">
+          <div class="fragment tilt fade-bottom hero-frag" data-parallax>
+            <div class="frag-rec-row">
+              <div class="frag-rec-btn" aria-hidden="true"></div>
+              <div class="frag-timer">04:12</div>
+              <div class="frag-status">MIC <span class="on">ON</span><br>SYSTEM <span class="on">ON</span></div>
+            </div>
+            <div class="frag-lines">
+              <div class="frag-line">
+                <span class="frag-time">03:58</span>
+                <span class="frag-text"><span class="frag-speaker">You</span>So walk me through where things stalled last quarter.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* Live scrolling waveform: a fixed blue "record head" sits toward the right. Audio
+   enters at the far right edge as flat red dots (nothing captured yet), travels left,
+   and only reveals its real amplitude once it crosses the record head, then continues
+   left as the live trailing waveform and exits the left edge. Speech cadence is a real
+   talk/pause state machine (each state lasts many ticks), not a per-tick coin flip, so
+   gaps between phrases actually read as gaps instead of flickering. */
+function buildWave(id, count) {
+  var box = document.getElementById(id);
+  var bars = [];
+  for (var i = 0; i < count; i++) {
+    var bar = document.createElement('i');
+    box.appendChild(bar);
+    bars.push(bar);
+  }
+  var FLAT = 0.05;
+  var liveIndex = Math.floor(count * 0.8); // record head at 80% across, waveform gets the left 80%
+  var heights = new Array(count).fill(FLAT);
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var state = 'pause';
+  var stateTicksLeft = 8;
+  var voiceLevel = FLAT;
+
+  function nextVoiceLevel() {
+    stateTicksLeft--;
+    if (stateTicksLeft <= 0) {
+      if (state === 'talking') { state = 'pause'; stateTicksLeft = 6 + Math.random() * 10; }
+      else { state = 'talking'; stateTicksLeft = 14 + Math.random() * 22; }
+    }
+    if (state === 'pause') {
+      voiceLevel += (FLAT - voiceLevel) * 0.4; // settle back to flat, not an instant snap
+    } else {
+      var burst = Math.random() < 0.12 ? 0.25 : 0;
+      voiceLevel += (Math.random() - 0.45) * 0.3 + burst;
+      voiceLevel = Math.max(0.15, Math.min(1, voiceLevel));
+    }
+    return voiceLevel;
+  }
+
+  function render() {
+    bars.forEach(function (bar, i) {
+      // still right of (or at) the record head: hasn't been "captured" yet, stays flat
+      var h = (i >= liveIndex) ? FLAT : heights[i];
+      bar.style.transform = 'scaleY(' + h.toFixed(3) + ')';
+    });
+  }
+
+  function tick() {
+    heights.shift();
+    heights.push(nextVoiceLevel());
+    render();
+  }
+
+  render();
+  if (!reduceMotion) setInterval(tick, 90);
+}
+buildWave('waveC', 90);
+buildWave('waveA', 56);
+</script>
+</body>
+</html>

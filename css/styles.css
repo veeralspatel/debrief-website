@@ -242,7 +242,7 @@ section { position: relative; padding: var(--section-pad) 0; }
 .cookie-banner {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
   background: var(--s1); border-top: 1px solid var(--bd);
-  padding: var(--sp-5) var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
   transform: translateY(0);
   transition: transform 200ms ease;
 }
@@ -251,15 +251,19 @@ section { position: relative; padding: var(--section-pad) 0; }
 @media (prefers-reduced-motion: reduce) { .cookie-banner { transition: none; } }
 .cookie-inner {
   max-width: var(--container-max); margin: 0 auto;
-  display: flex; flex-direction: column; gap: var(--sp-4);
+  display: flex; flex-direction: column; gap: var(--sp-3);
 }
 @media (min-width: 768px) {
-  .cookie-inner { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--sp-6); }
+  .cookie-inner { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--sp-5); }
 }
-.cookie-text { font-size: 13.5px; color: var(--t2); line-height: 1.55; }
+.cookie-text { font-size: 13px; color: var(--t2); line-height: 1.4; }
 .cookie-actions { display: flex; gap: var(--sp-3); flex-shrink: 0; }
+/* Buttons here are sized to the 44px accessibility floor (Doc 06 §13), not the site's
+   default 48px primary button, to keep the banner itself as short as the spec allows. */
 .cookie-actions .btn-primary,
-.cookie-actions .btn-ghost { flex: 1; }
+.cookie-actions .btn-ghost {
+  flex: 1; min-height: 44px; padding-top: 10px; padding-bottom: 10px;
+}
 @media (min-width: 768px) {
   .cookie-actions .btn-primary,
   .cookie-actions .btn-ghost { flex: none; }
@@ -310,36 +314,51 @@ section { position: relative; padding: var(--section-pad) 0; }
 .hero-copy .lead { color: var(--t2); }
 .hero-actions { display: flex; flex-direction: column; gap: var(--sp-3); align-items: flex-start; }
 
-.hero-frag-wrap { position: relative; }
-.hero-frag {
-  width: 100%;
-  padding: var(--sp-5);
+/* Hero animation: idle button -> click -> live recording, waveform spawns at a
+   fixed playhead and pushes left, fading out before it reaches the copy column.
+   Deliberately supersedes Doc 06 §9's static tilted-fragment hero treatment for
+   this specific section, per direct direction this session; the generic
+   `.fragment` component above is kept for any other recurring use. */
+.hero-anim-col { position: relative; display: flex; flex-direction: column; gap: var(--sp-6); }
+.hero-wave-band { position: relative; height: 110px; opacity: 0.5; }
+.hero-wave-bars {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; align-items: center; gap: 4px; overflow: hidden;
 }
-@media (max-width: 1023px) {
-  .hero-frag-wrap { margin: 0 -24px; padding: 0 24px; }
+.hero-wave-bars i {
+  display: block; width: 5px; flex-shrink: 0; border-radius: 3px; background: var(--red);
+  height: 90px; transform: scaleY(0.03); opacity: 1;
+  transition: transform 110ms ease, opacity 110ms ease;
 }
-
-/* Fragment inner content: mid-recording state */
-.frag-rec-row { display: flex; align-items: center; gap: var(--sp-4); padding-bottom: var(--sp-4); margin-bottom: var(--sp-4); border-bottom: 1px solid var(--bd); }
-.frag-rec-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.frag-rec-btn::after { content: ''; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
-.frag-timer { font-family: var(--mono); font-size: 15px; color: var(--t); }
-.frag-status { font-family: var(--mono); font-size: 10px; color: var(--t4); margin-left: auto; text-align: right; line-height: 1.6; }
-.frag-status .on { color: var(--green); }
-.frag-lines { display: flex; flex-direction: column; gap: var(--sp-3); }
-.frag-line { display: flex; gap: var(--sp-3); font-size: 13px; line-height: 1.55; }
-.frag-time { font-family: var(--mono); font-size: 10.5px; color: var(--t4); flex-shrink: 0; padding-top: 2px; }
-.frag-speaker { color: var(--blue); font-weight: 600; margin-right: 6px; }
-.frag-speaker.b { color: var(--t3); }
-.frag-text { color: #E5E5E7; }
+.hero-playhead {
+  position: absolute; top: 0; left: 75%; height: 100%; width: 2px;
+  background: var(--blue); box-shadow: 0 0 5px rgba(10,132,255,0.4);
+}
+.hero-anim-card-wrap { position: relative; height: 76px; }
+.hero-anim-card {
+  position: absolute; left: 75%; transform: translateX(-50%); width: 100%; max-width: 220px;
+  background: var(--s2); border: 1px solid var(--bd); border-radius: 14px;
+  padding: var(--sp-4) var(--sp-4); display: flex; align-items: center; gap: var(--sp-4);
+}
+.had-btn {
+  width: 36px; height: 36px; border-radius: 50%; background: #2E2E32;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: background 400ms ease;
+}
+.had-btn::after { content: ''; width: 13px; height: 13px; border-radius: 50%; background: #6C6C70; transition: background 400ms ease; }
+.had-btn.live { background: var(--red); }
+.had-btn.live::after { background: #fff; }
+.had-timer { font-family: var(--mono); font-size: 14px; color: var(--t3); transition: color 400ms ease; }
+.had-timer.live { color: var(--t); }
+.had-status { font-family: var(--mono); font-size: 9.5px; color: var(--t4); margin-left: auto; text-align: right; line-height: 1.7; }
+.had-status .on { color: var(--green); }
 
 @media (min-width: 1024px) {
   .hero-grid { grid-template-columns: minmax(0, var(--copy-max-hero)) 1fr; align-items: center; }
-  .hero-frag-wrap { margin-right: -120px; }
   .hero-actions { flex-direction: row; align-items: center; gap: var(--sp-5); }
-}
-@media (min-width: 1440px) {
-  .hero-frag-wrap { margin-right: -180px; }
+  .hero-wave-band { height: 140px; }
+  .hero-wave-bars i { height: 115px; }
+  .hero-anim-card-wrap { height: 84px; }
 }
 
 /* ============================================================

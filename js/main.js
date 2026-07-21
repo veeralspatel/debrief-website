@@ -37,26 +37,97 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- Fragment parallax (2-3px drift on scroll, hero + recurring) ---------- */
-  function initParallax() {
-    if (reduceMotion) return;
-    var frags = document.querySelectorAll('[data-parallax]');
-    if (!frags.length) return;
-    var ticking = false;
-    function update() {
-      var vh = window.innerHeight;
-      frags.forEach(function (el) {
-        var rect = el.getBoundingClientRect();
-        var progress = (rect.top + rect.height / 2 - vh / 2) / vh;
-        var drift = Math.max(-1, Math.min(1, progress)) * 3;
-        el.style.setProperty('--parallax-y', drift.toFixed(2) + 'px');
-      });
-      ticking = false;
+  /* ============================================================
+     Hero animation: idle button -> click at ~2s -> live recording.
+     Waveform spawns at a fixed playhead (75% across) and pushes left
+     continuously, real talk/pause cadence, fades out toward the left edge.
+     Runs once, then continues indefinitely, no reset, no replay control,
+     this is an ambient hero loop, not one of the four proof demos.
+     ============================================================ */
+  function initHeroAnimation() {
+    var barsBox = document.getElementById('heroWaveBars');
+    if (!barsBox) return;
+
+    // Bar count is derived from the container's real measured width, not a guess,
+    // so bars always fill it exactly at 5px + 4px gap each, never overflow-shrunk
+    // to invisibility (this region is a column-width slice, not the full viewport).
+    var BAR_W = 5, BAR_GAP = 4;
+    var count = Math.max(16, Math.floor(barsBox.getBoundingClientRect().width / (BAR_W + BAR_GAP)));
+    var bars = [];
+    for (var i = 0; i < count; i++) {
+      var bar = document.createElement('i');
+      barsBox.appendChild(bar);
+      bars.push(bar);
     }
-    window.addEventListener('scroll', function () {
-      if (!ticking) { requestAnimationFrame(update); ticking = true; }
-    }, { passive: true });
-    update();
+    var heights = new Array(count).fill(0.03);
+    var recording = false;
+    var edgeFadeFrac = 0.18; // last ~18% of travel fades + compresses before disappearing
+    // Playhead sits at 75% across. Values are computed and stored the moment they
+    // spawn at the rightmost slot, but only rendered for real once their index has
+    // shifted left past this threshold; right of it always reads as flat incoming dots.
+    var liveIndex = Math.floor(count * 0.75);
+
+    var state = 'pause';
+    var stateTicksLeft = 999; // stays "off" until recording starts
+    var voiceLevel = 0.03;
+
+    function nextVoiceLevel() {
+      stateTicksLeft--;
+      if (stateTicksLeft <= 0) {
+        if (state === 'talking') { state = 'pause'; stateTicksLeft = 6 + Math.random() * 10; }
+        else { state = 'talking'; stateTicksLeft = 14 + Math.random() * 22; }
+      }
+      if (state === 'pause') {
+        voiceLevel += (0.04 - voiceLevel) * 0.4;
+      } else {
+        var burst = Math.random() < 0.12 ? 0.25 : 0;
+        voiceLevel += (Math.random() - 0.45) * 0.3 + burst;
+        voiceLevel = Math.max(0.12, Math.min(1, voiceLevel));
+      }
+      return voiceLevel;
+    }
+
+    function render() {
+      var edgeCount = Math.max(1, Math.floor(count * edgeFadeFrac));
+      bars.forEach(function (bar, idx) {
+        var v = (idx >= liveIndex) ? 0.03 : heights[idx];
+        var edgeFactor = idx < edgeCount ? (idx / edgeCount) : 1;
+        bar.style.transform = 'scaleY(' + (v * edgeFactor).toFixed(3) + ')';
+        bar.style.opacity = edgeFactor.toFixed(3);
+      });
+    }
+
+    function waveTick() {
+      heights.shift();
+      heights.push(recording ? nextVoiceLevel() : 0.03);
+      render();
+    }
+
+    render();
+    if (!reduceMotion) setInterval(waveTick, 90);
+
+    function startRecording() {
+      recording = true;
+      state = 'talking';
+      stateTicksLeft = 10 + Math.random() * 10;
+      document.getElementById('heroAnimBtn').classList.add('live');
+      document.getElementById('heroAnimTimer').classList.add('live');
+      document.getElementById('heroAnimMic').textContent = 'ON';
+      document.getElementById('heroAnimMic').className = 'on';
+      document.getElementById('heroAnimSys').textContent = 'ON';
+      document.getElementById('heroAnimSys').className = 'on';
+      if (reduceMotion) { render(); return; }
+      var secs = 0;
+      setInterval(function () {
+        secs++;
+        var m = Math.floor(secs / 60), s = secs % 60;
+        document.getElementById('heroAnimTimer').textContent =
+          (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+      }, 1000);
+    }
+
+    if (reduceMotion) startRecording();
+    else setTimeout(startRecording, 2000);
   }
 
   /* ---------- FAQ accordion (independent, any number open, Doc 06 §7) ---------- */
@@ -434,7 +505,7 @@
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initReveals();
-    initParallax();
+    initHeroAnimation();
     initFaq();
     initCookieBanner();
     initClickTracking();

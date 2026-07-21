@@ -27,6 +27,25 @@ js/main.js                       scroll reveals, demos, FAQ accordion, cookie co
 images/                          favicon set + OG banner (generated from the locked app icon design)
 ```
 
+## Deviations from the original doc set (post-audit, direct instruction this session)
+
+- **Hero visual no longer matches Doc 06 §9's static tilted-fragment spec.** Replaced with a live
+  ambient animation: idle record button -> click at ~2s -> live recording, a red waveform spawns
+  at a fixed blue playhead (75% across) and pushes left continuously with real talk/pause cadence,
+  fading out before the copy column. Runs once, then forever, no reset, no replay control (unlike
+  the four numbered demos). Implementation in `initHeroAnimation()` in `js/main.js` and the
+  `.hero-anim-*` / `.hero-wave-*` / `.had-*` classes in `css/styles.css`. The generic `.fragment`
+  component (tilt, fade-bottom, parallax var) is kept in the CSS for any other recurring use, it's
+  just no longer used in the hero.
+- Real reference points used for this direction: granola.ai (sticky/updating content, soft
+  section-color transitions) and wisprflow.ai (rounded overlapping sections, animated curved
+  waveform-and-text motif). Full rounded/overlapping-section treatment elsewhere on the page was
+  approved in scope but not yet built as of this note, revisit if picking this back up.
+- **Known gotcha if extending this pattern elsewhere:** a scrolling bar-waveform confined to a
+  narrow column (not the full viewport) will silently overflow-shrink every bar to invisible width
+  if the bar count isn't derived from the container's real measured width. Always compute count
+  from `container.getBoundingClientRect().width / (barWidth + gap)`, don't hardcode it.
+
 ## Known open items (do not fabricate, per standing rule)
 
 - Nurture Email 3's cold-calling tip (ConvertKit side, not this repo, but tracked in Doc 07)
