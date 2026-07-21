@@ -314,11 +314,13 @@ section { position: relative; padding: var(--section-pad) 0; }
 .hero-copy .lead { color: var(--t2); }
 .hero-actions { display: flex; flex-direction: column; gap: var(--sp-3); align-items: flex-start; }
 
-/* Hero animation: idle button -> click -> live recording, waveform spawns at a
-   fixed playhead and pushes left, fading out before it reaches the copy column.
+/* Hero animation: idle -> click -> live recording, waveform spawns at a fixed
+   playhead and pushes left, fading out before it reaches the copy column.
    Deliberately supersedes Doc 06 §9's static tilted-fragment hero treatment for
-   this specific section, per direct direction this session; the generic
-   `.fragment` component above is kept for any other recurring use. */
+   this specific section; the generic `.fragment` component above is kept for
+   any other recurring use. The floating status card is the real app's own
+   floating-pill component (see `.rec-pill` below) — this instance stays put in
+   the hero, it does not join the traveling companion further down the page. */
 .hero-anim-col { position: relative; display: flex; flex-direction: column; gap: var(--sp-6); }
 .hero-wave-band { position: relative; height: 110px; opacity: 0.5; }
 .hero-wave-bars {
@@ -335,23 +337,6 @@ section { position: relative; padding: var(--section-pad) 0; }
   background: var(--blue); box-shadow: 0 0 5px rgba(10,132,255,0.4);
 }
 .hero-anim-card-wrap { position: relative; height: 76px; }
-.hero-anim-card {
-  position: absolute; left: 75%; transform: translateX(-50%); width: 100%; max-width: 220px;
-  background: var(--s2); border: 1px solid var(--bd); border-radius: 14px;
-  padding: var(--sp-4) var(--sp-4); display: flex; align-items: center; gap: var(--sp-4);
-}
-.had-btn {
-  width: 36px; height: 36px; border-radius: 50%; background: #2E2E32;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  transition: background 400ms ease;
-}
-.had-btn::after { content: ''; width: 13px; height: 13px; border-radius: 50%; background: #6C6C70; transition: background 400ms ease; }
-.had-btn.live { background: var(--red); }
-.had-btn.live::after { background: #fff; }
-.had-timer { font-family: var(--mono); font-size: 14px; color: var(--t3); transition: color 400ms ease; }
-.had-timer.live { color: var(--t); }
-.had-status { font-family: var(--mono); font-size: 9.5px; color: var(--t4); margin-left: auto; text-align: right; line-height: 1.7; }
-.had-status .on { color: var(--green); }
 
 @media (min-width: 1024px) {
   .hero-grid { grid-template-columns: minmax(0, var(--copy-max-hero)) 1fr; align-items: center; }
@@ -362,64 +347,154 @@ section { position: relative; padding: var(--section-pad) 0; }
 }
 
 /* ============================================================
-   Problem / Mechanism
+   Floating pill — recreated from the real app's own locked
+   floating-pill component (grip / rec-dot / timer / mute / pause /
+   stop). Used two ways: a still instance embedded in the hero
+   (positioned at the same playhead the waveform already uses), and
+   a second, independent instance that travels with scroll further
+   down the page (see "Traveling companion pill" below). Same visual
+   component, two different jobs — never the same DOM node.
    ============================================================ */
-.pm-heading { max-width: var(--copy-max); margin-bottom: var(--sp-5); }
-.pm-body { max-width: var(--copy-max); display: flex; flex-direction: column; gap: var(--sp-4); margin-bottom: var(--sp-7); }
-.pm-body p { color: var(--t2); }
-.pm-mechanism { font-size: var(--fs-lead); color: var(--t); font-weight: 500; }
-
-.demo-block { margin-bottom: var(--sp-7); }
-.demo-caption { max-width: var(--copy-max); font-size: 14px; color: var(--t2); margin-top: var(--sp-4); line-height: 1.6; }
-
-.demo-wrap {
-  background: var(--s1); border: 1px solid var(--bd); border-radius: 16px;
-  padding: var(--sp-5); position: relative;
+.rec-pill {
+  position: absolute; left: 75%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: var(--sp-3);
+  background: var(--s2); border: 1px solid var(--bdh); border-radius: 26px;
+  padding: 7px 9px 7px 7px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  opacity: 0; transition: opacity 400ms ease;
 }
-@media (min-width: 768px) { .demo-wrap { padding: var(--sp-6); } }
-.demo-ctl { position: absolute; top: var(--sp-5); right: var(--sp-5); z-index: 5; }
+.rec-pill.in { opacity: 1; }
+.rec-pill-grip { display: flex; flex-direction: column; gap: 2px; padding: 4px 3px; }
+.rec-pill-grip .dr { display: flex; gap: 2px; }
+.rec-pill-grip .d { width: 2.5px; height: 2.5px; border-radius: 50%; background: var(--t4); }
+.rec-pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex-shrink: 0; animation: breathe 1.2s ease-in-out infinite; }
+.rec-pill-timer { font-family: var(--mono); font-size: 13px; color: var(--t); flex-shrink: 0; min-width: 36px; }
+.rec-pill-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--bdh); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rec-pill-btn.stop { background: #B23A32; }
+.rec-pill-btn svg { width: 14px; height: 14px; }
 
-/* Demo 1 — mic/system → waveform → transcript → save */
-.d1 { display: flex; flex-direction: column; gap: var(--sp-5); }
-.d1-left {
-  background: var(--s2); border: 1px solid var(--bd); border-radius: 14px;
-  padding: var(--sp-5); display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: var(--sp-4);
+/* ============================================================
+   Section sheet — inset rounded panel ("Option C"), replaces flat
+   alternating-background sections. Generous gaps between instances,
+   no overlap, except the first one below the hero (see --first).
+   ============================================================ */
+.section-sheet {
+  max-width: var(--container-max); margin: 0 auto var(--sp-6);
+  background: var(--s1); border: 1px solid var(--bd); border-radius: 28px;
+  padding: var(--sp-7) var(--container-pad);
 }
-.rec-btn { width: 56px; height: 56px; border-radius: 50%; background: #2E2E32; display: flex; align-items: center; justify-content: center; transition: background 400ms ease; flex-shrink: 0; }
-.rec-btn.live { background: var(--red); }
-.rec-btn::after { content: ''; width: 18px; height: 18px; border-radius: 50%; background: #6C6C70; transition: background 400ms ease; }
-.rec-btn.live::after { background: #fff; }
-.rec-timer { font-family: var(--mono); font-size: 15px; color: var(--t3); transition: color 400ms ease; }
-.rec-timer.live { color: var(--t); }
-.rec-src { font-family: var(--mono); font-size: 10px; color: var(--t4); line-height: 1.7; }
-.rec-src .on { color: var(--green); }
-.wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 34px; flex: 1; min-width: 60px; }
-.wave i {
-  display: block; width: 3px; border-radius: 2px; background: #2E2E32;
-  height: 30px; transform: scaleY(4 / 30); transform-origin: center;
-  transition: transform 120ms ease, background 300ms ease;
-}
-.wave.live i { background: var(--red); }
+@media (min-width: 1024px) { .section-sheet { border-radius: 36px; padding: var(--sp-8) var(--container-pad); } }
+.section-sheet:last-of-type { margin-bottom: 0; }
+/* One deliberate seam: the first sheet tucks up under the hero rather than
+   sitting a plain gap below it, a small nod to the layered-section feel of
+   the reference sites, kept to this single handoff rather than used everywhere. */
+.section-sheet--first { margin-top: calc(-1 * var(--sp-7)); position: relative; box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6); }
 
-.d1-right { background: var(--s2); border: 1px solid var(--bd); border-radius: 14px; padding: var(--sp-5); display: flex; flex-direction: column; min-height: 220px; }
-.file-bar { display: flex; align-items: center; gap: var(--sp-2); font-family: var(--mono); font-size: 10.5px; color: var(--t4); padding-bottom: var(--sp-4); border-bottom: 1px solid var(--bd); margin-bottom: var(--sp-4); }
-.file-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #2E2E32; transition: background 300ms ease; flex-shrink: 0; }
-.file-bar .dot.live { background: var(--red); }
-.tline { display: flex; gap: var(--sp-3); font-size: 13.5px; line-height: 1.6; margin-bottom: var(--sp-3); opacity: 0; transform: translateY(4px); transition: opacity 300ms ease, transform 300ms ease; }
-.tline.in { opacity: 1; transform: none; }
-.ttime { font-family: var(--mono); font-size: 10.5px; color: var(--t4); flex-shrink: 0; padding-top: 3px; }
-.tspk { color: var(--blue); font-weight: 600; margin-right: 6px; }
-.tspk.b { color: var(--t3); }
-.ttext { color: #E5E5E7; }
-.saved { margin-top: auto; padding-top: var(--sp-4); border-top: 1px solid var(--bd); font-family: var(--mono); font-size: 10.5px; color: var(--t4); display: flex; align-items: center; gap: 7px; opacity: 0; transition: opacity 400ms ease; }
-.saved.in { opacity: 1; }
-.saved .ok { color: var(--green); }
-
-@media (min-width: 768px) {
-  .d1 { flex-direction: row; align-items: stretch; min-height: 260px; }
-  .d1-left { width: 220px; flex-direction: column; justify-content: center; gap: var(--sp-4); flex-shrink: 0; }
-  .rec-src { text-align: center; }
+/* ============================================================
+   Problem / Mechanism — scroll-narrated, real Record-tab screen
+   ============================================================ */
+.pn-row { display: flex; flex-direction: column; gap: var(--sp-6); }
+.pn-text { flex: 1; min-width: 0; }
+.pn-beat { padding: var(--sp-6) 0; opacity: 0.35; transition: opacity 400ms ease; }
+.pn-beat:first-child { padding-top: 0; }
+.pn-beat:last-child { padding-bottom: 0; }
+.pn-beat.active { opacity: 1; }
+.pn-beat h2 { margin-bottom: var(--sp-4); }
+.pn-beat p { color: var(--t2); }
+.pn-sticky-wrap { align-self: center; width: 100%; max-width: 360px; }
+@media (min-width: 1024px) {
+  .pn-row { flex-direction: row; align-items: flex-start; gap: var(--sp-8); }
+  .pn-beat { padding: var(--sp-9) 0; }
+  .pn-sticky-wrap { flex: 0 0 360px; position: sticky; top: 120px; align-self: flex-start; }
 }
+
+/* real Record-tab recreation — structure/colors/copy lifted directly from
+   record-tab-dark-mode-states.html, not redrawn */
+.appwin { background: var(--s2); border: 1px solid var(--bd); border-radius: 12px; overflow: hidden; }
+.appwin-bar { background: #1A1A1D; padding: 9px 13px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--bd); }
+.appwin-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--bdh); }
+.appwin-title { font-family: var(--mono); font-size: 10px; color: var(--t4); margin-left: var(--sp-2); }
+
+.rt-app { display: flex; min-height: 380px; }
+.rt-sidebar { width: 48px; background: var(--s1); border-right: 1px solid var(--bd); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: var(--sp-4) 0; flex-shrink: 0; }
+.rt-nav-top { display: flex; flex-direction: column; gap: var(--sp-4); align-items: center; }
+.rt-nav-item { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rt-nav-item.active-box { background: var(--bdh); }
+.rt-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.rt-rec-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); animation: breathe 1.2s ease-in-out infinite; display: none; }
+.rt-rec-dot.on { display: block; }
+.rt-mic-idle.hidden { display: none; }
+
+.rt-main { flex: 1; padding: var(--sp-5); display: flex; flex-direction: column; min-width: 0; }
+.rt-status { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--t2); }
+.rt-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.rt-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-3); padding: var(--sp-5) 0; }
+.rt-timer { font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--t); }
+.rt-record-btn, .rt-stop-btn { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.rt-record-btn { background: var(--red); }
+.rt-stop-btn { background: #5C1D18; border: 2.5px solid var(--red); }
+.rt-stop-icon { width: 18px; height: 18px; background: #fff; border-radius: 3px; }
+.rt-press-label { font-size: 13px; color: var(--t); }
+.rt-press-sub { font-size: 11px; color: var(--t4); margin-top: -6px; }
+.rt-secondary { display: flex; gap: var(--sp-3); align-items: center; }
+.rt-secondary-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--bdh); display: flex; align-items: center; justify-content: center; }
+.rt-pause-icon { width: 9px; height: 10px; display: flex; justify-content: space-between; }
+.rt-pause-icon span { width: 2.6px; height: 100%; background: var(--t); border-radius: 1px; }
+.rt-mute-icon { width: 10px; height: 10px; border: 1.3px solid var(--t); border-radius: 3px 3px 4px 4px; position: relative; }
+.rt-mute-icon::before { content: ''; position: absolute; top: 50%; left: -1.5px; width: 13px; height: 1.4px; background: var(--t); transform: rotate(45deg); }
+.rt-control-caption { font-size: 10px; color: var(--t3); }
+.rt-recent { background: var(--s2); border: 1px solid var(--bd); border-radius: 9px; padding: var(--sp-3) var(--sp-4); margin-top: auto; }
+.rt-recent-title { font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--t3); margin: 0 0 6px; }
+.rt-recent-row { display: flex; justify-content: space-between; align-items: center; }
+.rt-recent-name { font-size: 11.5px; color: var(--t); transition: opacity 200ms ease; }
+.rt-recent-meta { font-size: 10px; color: var(--t3); margin-top: 2px; transition: opacity 200ms ease; }
+.rt-badge { background: #1E1A15; color: #E6A23C; font-size: 9px; padding: 2px 7px; border-radius: 9px; flex-shrink: 0; }
+
+/* ============================================================
+   New scroll beats — Filing / Transcription / Offline
+   ============================================================ */
+.mo-row { display: flex; flex-direction: column; gap: var(--sp-6); }
+.mo-copy { flex: 1; }
+.mo-visual-wrap { flex: 1; min-width: 0; position: relative; }
+@media (min-width: 1024px) {
+  .mo-row { flex-direction: row; align-items: center; gap: var(--sp-8); }
+  .mo-copy { flex: 0 0 360px; }
+}
+
+.fin-row { display: flex; align-items: center; gap: var(--sp-3); padding: 10px 4px; border-bottom: 1px solid var(--bd); }
+.fin-row:last-child { border-bottom: none; }
+.fin-icon { width: 16px; height: 16px; stroke: var(--t3); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+.fin-name { font-family: var(--mono); font-size: 12px; color: var(--t); flex: 1; }
+.fin-meta { font-family: var(--mono); font-size: 10px; color: var(--t4); flex-shrink: 0; }
+.fin-row.new { opacity: 0; transform: translateY(-6px); transition: opacity 450ms ease, transform 450ms ease; }
+.fin-row.new.in { opacity: 1; transform: none; }
+
+.tr-line { display: flex; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.tr-line:last-child { margin-bottom: 0; }
+.tr-who { font-family: var(--mono); font-size: 10px; color: var(--t4); width: 44px; flex-shrink: 0; padding-top: 2px; }
+.tr-who.you { color: var(--blue); }
+.tr-text { font-size: 13px; color: var(--t2); margin: 0; }
+
+/* offline beat reuses the exact toggle already established on the
+   local-transcription page (`.tog`/`.knob`), not a new component */
+.off-row { display: flex; align-items: center; justify-content: space-between; padding: 0 0 var(--sp-5); }
+.off-label { font-size: 14px; color: var(--t); }
+.off-sub { font-size: 11px; color: var(--t3); margin-top: 2px; }
+.off-wave { display: flex; align-items: center; gap: 2px; height: 22px; }
+.off-wave i { width: 2.5px; border-radius: 2px; background: var(--red); display: block; animation: offbar 900ms ease-in-out infinite; }
+@keyframes offbar { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+.off-wave-cap { font-family: var(--mono); font-size: 10px; color: var(--t4); margin-top: var(--sp-3); }
+
+/* ============================================================
+   Traveling companion pill — a second `.rec-pill` instance, fixed to the
+   viewport, that docks to whichever beat (Record panel / Filing /
+   Transcription / Offline) is centered as the user scrolls. Deliberately
+   does not include the hero — the hero keeps its own still instance above.
+   Hidden between beats where the real app wouldn't show it either (a call
+   that's already been filed and transcribed isn't still recording).
+   ============================================================ */
+.travel-pill { position: fixed; top: 0; left: 0; z-index: 40; pointer-events: none; opacity: 0; transition: opacity 350ms ease; }
+.travel-pill.show { opacity: 1; }
+@media (max-width: 1023px) { .travel-pill { display: none; } }
 
 /* Demo 4 — auto-detect */
 .d4 { position: relative; min-height: 240px; display: flex; align-items: center; justify-content: center; padding-top: var(--sp-6); }
@@ -448,38 +523,48 @@ section { position: relative; padding: var(--section-pad) 0; }
 .pill-x { font-size: 11px; color: var(--t4); }
 
 /* ============================================================
-   Value Stack
+   Value Stack — scroll list + sticky window-chrome panel, replaces
+   the old card grid. Real Lucide icon paths, same set the app itself
+   uses (design-system.html), not invented shapes.
    ============================================================ */
-.vs-heading { max-width: var(--copy-max); margin-bottom: var(--sp-7); }
-.vs-grid {
-  display: grid; grid-template-columns: 1fr; gap: var(--sp-5);
-  margin-bottom: var(--sp-7);
+.vs-heading { max-width: var(--copy-max); margin-bottom: var(--sp-3); }
+.vs-sub { max-width: var(--copy-max); margin-bottom: var(--sp-7); }
+.sd-row { display: flex; flex-direction: column; gap: var(--sp-6); margin-bottom: var(--sp-7); }
+.sd-list { flex: 1; min-width: 0; }
+.sd-item { padding: var(--sp-6) 0; border-bottom: 1px solid var(--bd); opacity: 0.35; transition: opacity 400ms ease; }
+.sd-item:first-child { padding-top: 0; }
+.sd-item:last-child { border-bottom: none; }
+.sd-item.active { opacity: 1; }
+.sd-item h3 { font-size: 16px; margin-bottom: var(--sp-2); display: flex; align-items: center; gap: var(--sp-3); }
+.sd-item p { color: var(--t2); font-size: var(--fs-body-2); max-width: 50ch; }
+.sd-num { font-family: var(--mono); font-size: 11px; color: var(--t4); margin-bottom: var(--sp-2); }
+.sd-sticky-wrap { align-self: center; width: 100%; max-width: 320px; }
+.sd-icon-wrap { width: 40px; height: 40px; border-radius: 11px; background: var(--bg); border: 1px solid var(--bd); display: flex; align-items: center; justify-content: center; margin: var(--sp-5) var(--sp-5) 0; }
+.sd-icon { width: 20px; height: 20px; stroke: var(--blue); stroke-width: 1.8; fill: none; }
+.sd-title { font-size: 15.5px; margin: var(--sp-4) var(--sp-5) 9px; min-height: 22px; }
+.sd-desc { font-size: 12.5px; color: var(--t3); margin: 0 var(--sp-5); }
+.sd-microloop { margin: var(--sp-4) var(--sp-5) 0; }
+.sd-rail { display: flex; gap: 5px; margin: var(--sp-5) var(--sp-5) 0; }
+.sd-rail-dot { height: 3px; flex: 1; border-radius: 2px; background: var(--bd); transition: background 300ms ease; }
+.sd-rail-dot.active { background: var(--blue); }
+.sd-count { font-family: var(--mono); font-size: 10px; color: var(--t4); margin: 9px var(--sp-5) var(--sp-5); }
+@media (min-width: 1024px) {
+  .sd-row { flex-direction: row; align-items: flex-start; gap: var(--sp-8); }
+  .sd-sticky-wrap { flex: 0 0 320px; position: sticky; top: 120px; align-self: flex-start; }
 }
-@media (min-width: 768px) { .vs-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .vs-grid { grid-template-columns: repeat(3, 1fr); gap: var(--sp-6); } }
 
-.vs-item {
-  background: var(--s2); border: 1px solid var(--bd); border-radius: 12px;
-  padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-3);
-  transition: transform 180ms ease, border-color 180ms ease;
-}
-@media (hover: hover) and (pointer: fine) {
-  .vs-item:hover { transform: translateY(-2px); border-color: var(--bdh); }
-}
-.vs-item.vs-closer { grid-column: 1 / -1; }
-@media (min-width: 768px) {
-  .vs-item.vs-closer { display: grid; grid-template-columns: 1fr; }
-}
-.vs-check { width: 20px; height: 20px; flex-shrink: 0; }
-.vs-check circle, .vs-check path {
-  stroke: var(--green); stroke-width: 2; fill: none;
-  stroke-dasharray: 40; stroke-dashoffset: 40;
-  transition: stroke-dashoffset 300ms ease;
-}
-.vs-item.in .vs-check circle, .vs-item.in .vs-check path { stroke-dashoffset: 0; }
-.vs-item h3 { font-size: 16px; }
-.vs-item p { color: var(--t2); font-size: var(--fs-body-2); }
+/* checkmark icon — still used by the AI-feedback closer below even though
+   the card grid it originally styled is gone */
+.vs-check { width: 20px; height: 20px; flex-shrink: 0; margin-bottom: var(--sp-2); }
+.vs-check path { stroke: var(--green); stroke-width: 2; fill: none; }
 
+/* AI call feedback prompt — the value stack's closing item, deliberately its
+   own highlighted block (was ".vs-item.vs-closer" against the old card grid;
+   the grid is gone, but this one still earns its own container). */
+.vs-ai-closer {
+  background: var(--s2); border: 1px solid var(--bd); border-radius: 14px;
+  padding: var(--sp-6); margin-bottom: var(--sp-7);
+}
 .vs-closer-inner { display: flex; flex-direction: column; gap: var(--sp-6); }
 @media (min-width: 1024px) {
   .vs-closer-inner { flex-direction: row; align-items: flex-start; }
@@ -488,6 +573,11 @@ section { position: relative; padding: var(--section-pad) 0; }
 }
 .vs-stack-close { font-size: var(--fs-lead); color: var(--t); margin-top: var(--sp-5); }
 .vs-stack-close b { color: var(--blue); }
+
+/* secondary CTA after the value stack — a visitor sold on the checklist
+   shouldn't need to scroll all the way back up to act */
+.vs-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-5); margin-top: var(--sp-7); padding-top: var(--sp-6); border-top: 1px solid var(--bd); }
+.vs-cta-row p { color: var(--t2); margin: 0; }
 
 .vs-microloop-row { display: flex; flex-direction: column; gap: var(--sp-5); align-items: flex-start; margin-top: var(--sp-5); }
 @media (min-width: 768px) { .vs-microloop-row { flex-direction: row; align-items: center; } }
@@ -591,12 +681,20 @@ section { position: relative; padding: var(--section-pad) 0; }
 /* ============================================================
    Waitlist form
    ============================================================ */
-.waitlist-inner { max-width: var(--copy-max); text-align: left; }
+/* Was its own narrower centered max-width, which re-centered this section at
+   a different left edge than every other section on the page — a real
+   consistency bug a design critique caught. Heading/copy get the same
+   copy-max reading measure everything else uses, without re-centering the
+   container itself. */
+.waitlist-inner h2, .waitlist-inner .waitlist-form, .waitlist-inner .risk-reversal { max-width: var(--copy-max); }
 .waitlist-form { display: flex; flex-direction: column; gap: var(--sp-4); align-items: flex-start; margin-top: var(--sp-6); }
 .ck-form-wrap { display: flex; flex-direction: column; gap: var(--sp-3); width: 100%; max-width: 340px; }
 @media (min-width: 480px) {
   .ck-form-wrap { flex-direction: row; align-items: flex-start; max-width: none; }
   .ck-form-wrap .field-group { max-width: 300px; }
+  /* the button was compressing to two lines in this row — it never should
+     shrink, the input should give up the space instead */
+  .ck-form-wrap .btn-primary { flex-shrink: 0; white-space: nowrap; }
 }
 .waitlist-success { display: none; align-items: center; gap: var(--sp-3); color: var(--green); font-size: 15px; }
 .waitlist-success.show { display: flex; }

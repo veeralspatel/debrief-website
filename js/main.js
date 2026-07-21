@@ -3,7 +3,8 @@
    Vanilla JS only, no framework, no build step (Doc 04 §1).
    Covers: scroll reveals, fragment parallax, FAQ accordion,
    cookie consent + gated GA4, ConvertKit form handling,
-   and the four coded demos + auto-filing micro-loop (Doc 06 §8).
+   the hero + mechanism + new beats + value stack scroll mechanics,
+   and the remaining coded demos (Doc 06 §8).
    ============================================================ */
 (function () {
   'use strict';
@@ -38,11 +39,13 @@
   }
 
   /* ============================================================
-     Hero animation: idle button -> click at ~2s -> live recording.
+     Hero animation: idle -> click at ~2s -> live recording.
      Waveform spawns at a fixed playhead (75% across) and pushes left
      continuously, real talk/pause cadence, fades out toward the left edge.
-     Runs once, then continues indefinitely, no reset, no replay control,
-     this is an ambient hero loop, not one of the four proof demos.
+     The status card is the real app's own floating-pill component
+     (`.rec-pill`) — this instance stays put in the hero; it is a separate
+     DOM node from the traveling companion further down the page, per
+     direct instruction that the hero keeps its own thing.
      ============================================================ */
   function initHeroAnimation() {
     var barsBox = document.getElementById('heroWaveBars');
@@ -110,24 +113,79 @@
       recording = true;
       state = 'talking';
       stateTicksLeft = 10 + Math.random() * 10;
-      document.getElementById('heroAnimBtn').classList.add('live');
-      document.getElementById('heroAnimTimer').classList.add('live');
-      document.getElementById('heroAnimMic').textContent = 'ON';
-      document.getElementById('heroAnimMic').className = 'on';
-      document.getElementById('heroAnimSys').textContent = 'ON';
-      document.getElementById('heroAnimSys').className = 'on';
+      var pill = document.getElementById('heroPill');
+      var timerEl = document.getElementById('heroPillTimer');
+      var dotEl = document.getElementById('heroPillDot');
+      if (pill) pill.classList.add('in');
+      if (dotEl) dotEl.classList.remove('idle-dim');
       if (reduceMotion) { render(); return; }
       var secs = 0;
       setInterval(function () {
         secs++;
         var m = Math.floor(secs / 60), s = secs % 60;
-        document.getElementById('heroAnimTimer').textContent =
-          (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        if (timerEl) timerEl.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
       }, 1000);
     }
 
     if (reduceMotion) startRecording();
     else setTimeout(startRecording, 2000);
+  }
+
+  /* ============================================================
+     Problem / Mechanism — scroll-narrated, real Record-tab screen.
+     Structure/copy/proportions recreated from the app's own
+     record-tab-dark-mode-states.html rather than an invented widget.
+     Beat 2 (recording) also lights up the traveling pill's Record-panel
+     dock, see initTravelingPill.
+     ============================================================ */
+  var mechanismState = null; // exposed so the traveling pill can react
+  function initMechanismPanel() {
+    var beats = document.querySelectorAll('#mechanismBeats .pn-beat');
+    var micIdle = document.getElementById('rtMicIdle');
+    var recDot = document.getElementById('rtRecDot');
+    var statusText = document.getElementById('rtStatusText');
+    var center = document.getElementById('rtCenter');
+    var recentName = document.getElementById('rtRecentName');
+    var recentMeta = document.getElementById('rtRecentMeta');
+    var recentBadge = document.getElementById('rtRecentBadge');
+    if (!beats.length || !center) return;
+
+    var IDLE_CENTER = '<div class="rt-record-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0A0A0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>' +
+      '<div class="rt-press-label">Press to record</div><div class="rt-press-sub">or press spacebar</div>';
+    var REC_CENTER = '<div class="rt-timer">00:14</div><div class="rt-stop-btn"><div class="rt-stop-icon"></div></div>' +
+      '<div class="rt-secondary"><div class="rt-secondary-btn"><div class="rt-pause-icon"><span></span><span></span></div></div>' +
+      '<div class="rt-secondary-btn"><div class="rt-mute-icon"></div></div></div><div class="rt-control-caption">Pause · Mute</div>';
+
+    function setState(state) {
+      if (state === mechanismState) return;
+      mechanismState = state;
+      if (state === 'idle') {
+        micIdle.classList.remove('hidden'); recDot.classList.remove('on');
+        statusText.textContent = 'Device ready'; center.innerHTML = IDLE_CENTER;
+        recentName.textContent = '2026-07-14_Acme_Cold'; recentMeta.textContent = 'Today, 1:45 PM · 4:12'; recentBadge.textContent = 'Cold call';
+      } else if (state === 'recording') {
+        micIdle.classList.add('hidden'); recDot.classList.add('on');
+        statusText.textContent = 'Recording'; center.innerHTML = REC_CENTER;
+      } else if (state === 'filed') {
+        micIdle.classList.remove('hidden'); recDot.classList.remove('on');
+        statusText.textContent = 'Device ready'; center.innerHTML = IDLE_CENTER;
+        recentName.textContent = '2026-07-20_Discovery_Call'; recentMeta.textContent = 'Just now · 14:22'; recentBadge.textContent = 'Discovery';
+      }
+      document.dispatchEvent(new CustomEvent('mechanism:state', { detail: { state: state } }));
+    }
+    setState('idle');
+
+    if (reduceMotion || !('IntersectionObserver' in window)) { setState('recording'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var i = Number(entry.target.dataset.index);
+          beats.forEach(function (el) { el.classList.toggle('active', Number(el.dataset.index) === i); });
+          setState(entry.target.dataset.state);
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    beats.forEach(function (el) { io.observe(el); });
   }
 
   /* ---------- FAQ accordion (independent, any number open, Doc 06 §7) ---------- */
@@ -204,7 +262,13 @@
     });
   }
 
-  /* ---------- Waitlist form (ConvertKit embed) ---------- */
+  /* ---------- Waitlist form (ConvertKit embed) ----------
+     Fixed per a design critique finding: this used to call onSuccess() from
+     both .then() and .catch() unconditionally, so a signup could silently
+     fail (wrong/placeholder form action, network error, ConvertKit rejecting
+     the request) while the visitor was told they were on the list. Success
+     now requires an actual ok response; anything else shows a real,
+     non-alarming error with a way to try again. */
   function initWaitlistForm() {
     var form = document.getElementById('waitlist-form');
     if (!form) return;
@@ -234,12 +298,14 @@
         method: 'POST',
         body: new FormData(form),
         headers: { 'Accept': 'application/json' }
-      }).then(function () {
-        onSuccess();
+      }).then(function (response) {
+        if (response.ok) {
+          onSuccess();
+        } else {
+          onError();
+        }
       }).catch(function () {
-        // ConvertKit endpoint not wired up yet in local/dev, still show success
-        // so the styled confirmation state can be reviewed before the real form ID exists.
-        onSuccess();
+        onError();
       });
 
       function onSuccess() {
@@ -249,92 +315,161 @@
         form.querySelector('.field-group').style.display = 'none';
         track('waitlist_submit', {});
       }
+
+      function onError() {
+        btn.disabled = false;
+        btn.textContent = btnLabel;
+        errorEl.textContent = 'That didn’t go through. Try again in a moment.';
+        errorEl.classList.add('show');
+        track('waitlist_submit_error', {});
+      }
     });
   }
 
   /* ============================================================
-     Demo 1 — Problem/Mechanism: mic/system on -> waveform live ->
-     transcript types in -> file saves. Ported from docs/demos.html.
+     Filing beat — new file animates into a real Finder-style list.
      ============================================================ */
-  function initDemo1() {
-    var root = document.getElementById('demo-1');
+  function initFilingBeat() {
+    var root = document.getElementById('filingBeat');
     if (!root) return;
-    var wave = document.getElementById('wv');
-    var bars = [];
-    for (var i = 0; i < 28; i++) {
-      var bar = document.createElement('i');
-      wave.appendChild(bar);
-      bars.push(bar);
+    var newRow = document.getElementById('finNewRow');
+    var revealed = false;
+    function reveal() {
+      if (revealed) return; revealed = true;
+      if (reduceMotion) { newRow.classList.add('in'); return; }
+      requestAnimationFrame(function () { newRow.classList.add('in'); });
     }
-    var lines = [
-      { t: '00:04', s: 'You', b: false, x: 'Thanks for jumping on, I know you’re busy.' },
-      { t: '00:11', s: 'Prospect', b: true, x: 'No worries. So what does this actually do differently?' },
-      { t: '00:19', s: 'You', b: false, x: 'It records the whole call and writes the transcript locally, nothing gets uploaded.' }
-    ];
-    var timers = [], waveInt;
+    if (reduceMotion || !('IntersectionObserver' in window)) { reveal(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) { reveal(); io.unobserve(entry.target); } });
+    }, { threshold: 0.4 });
+    io.observe(root);
+  }
 
-    function clear() { timers.forEach(clearTimeout); timers = []; clearInterval(waveInt); }
-
-    function run() {
-      clear();
-      var rb = document.getElementById('rb'), rt = document.getElementById('rt'),
-          fd = document.getElementById('fd'), fn = document.getElementById('fn'),
-          tl = document.getElementById('tl'), sv = document.getElementById('sv'),
-          s1 = document.getElementById('s1'), s2 = document.getElementById('s2');
-
-      rb.classList.remove('live'); rt.classList.remove('live'); wave.classList.remove('live');
-      fd.classList.remove('live'); sv.classList.remove('in'); tl.innerHTML = '';
-      rt.textContent = '00:00'; fn.textContent = 'no active recording';
-      s1.textContent = '—'; s2.textContent = '—'; s1.className = ''; s2.className = '';
-      bars.forEach(function (b) { b.style.transform = 'scaleY(' + (4 / 30) + ')'; });
-
-      if (reduceMotion) {
-        s1.textContent = 'ON'; s1.className = 'on'; s2.textContent = 'ON'; s2.className = 'on';
-        rb.classList.add('live'); rt.classList.add('live'); wave.classList.add('live'); fd.classList.add('live');
-        fn.textContent = '2026-07-20-discovery-call.md';
-        lines.forEach(function (l) {
-          var d = document.createElement('div'); d.className = 'tline in';
-          d.innerHTML = '<span class="ttime">' + l.t + '</span><span class="ttext"><span class="tspk' + (l.b ? ' b' : '') + '">' + l.s + '</span>' + l.x + '</span>';
-          tl.appendChild(d);
-        });
-        sv.classList.add('in');
-        return;
+  /* ============================================================
+     Offline beat — Wi-Fi toggle switches off, waveform keeps going.
+     Reuses the exact `.tog`/`.knob` toggle already established on the
+     local-transcription page, not a new component.
+     ============================================================ */
+  function initOfflineBeat() {
+    var root = document.getElementById('offlineBeat');
+    if (!root) return;
+    var toggle = document.getElementById('offToggle');
+    var sub = document.getElementById('offSub');
+    var waveBox = document.getElementById('offWave');
+    if (waveBox && !waveBox.children.length) {
+      for (var i = 0; i < 20; i++) {
+        var bar = document.createElement('i');
+        bar.style.animationDelay = (i * 45) + 'ms';
+        bar.style.height = '14px';
+        waveBox.appendChild(bar);
       }
+    }
+    var flipped = false;
+    function flip() {
+      if (flipped) return; flipped = true;
+      var go = function () { toggle.classList.add('off'); sub.textContent = 'Off — still recording locally'; };
+      if (reduceMotion) go(); else setTimeout(go, 500);
+    }
+    if (reduceMotion || !('IntersectionObserver' in window)) { flip(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) { flip(); io.unobserve(entry.target); } });
+    }, { threshold: 0.4 });
+    io.observe(root);
+  }
 
-      timers.push(setTimeout(function () { s1.textContent = 'ON'; s1.className = 'on'; }, 500));
-      timers.push(setTimeout(function () { s2.textContent = 'ON'; s2.className = 'on'; }, 800));
-      timers.push(setTimeout(function () {
-        rb.classList.add('live'); rt.classList.add('live'); wave.classList.add('live'); fd.classList.add('live');
-        fn.textContent = '2026-07-20-discovery-call.md';
-        var sec = 0;
-        waveInt = setInterval(function () {
-          bars.forEach(function (b) {
-            var h = 4 + Math.random() * 26;
-            b.style.transform = 'scaleY(' + (h / 30) + ')';
-          });
-          sec++;
-          if (sec % 10 === 0) { var s = Math.floor(sec / 10); rt.textContent = '00:' + (s < 10 ? '0' : '') + s; }
-        }, 100);
-      }, 1200));
-      lines.forEach(function (l, i) {
-        timers.push(setTimeout(function () {
-          var d = document.createElement('div'); d.className = 'tline';
-          d.innerHTML = '<span class="ttime">' + l.t + '</span><span class="ttext"><span class="tspk' + (l.b ? ' b' : '') + '">' + l.s + '</span>' + l.x + '</span>';
-          tl.appendChild(d);
-          setTimeout(function () { d.classList.add('in'); }, 30);
-        }, 2200 + i * 1400));
-      });
-      timers.push(setTimeout(function () {
-        clearInterval(waveInt);
-        rb.classList.remove('live'); rt.classList.remove('live'); wave.classList.remove('live'); fd.classList.remove('live');
-        bars.forEach(function (b) { b.style.transform = 'scaleY(' + (4 / 30) + ')'; });
-        sv.classList.add('in');
-      }, 7400));
+  /* ============================================================
+     Traveling companion pill — a second `.rec-pill` instance, fixed to
+     the viewport, docking to whichever beat (Record panel / Filing /
+     Transcription / Offline) sits closest to the viewport center as the
+     page scrolls (weighted-distance blend across the beats' anchor
+     points, not a manual per-section lerp). Deliberately starts at the
+     Record panel, not the hero — the hero keeps its own still instance.
+     Hidden between beats where a call wouldn't really still be "live"
+     (a filed, transcribed call isn't recording) — stricter to the real
+     app spec than showing it continuously throughout.
+     ============================================================ */
+  function initTravelingPill() {
+    var pill = document.getElementById('travelPill');
+    var dotEl = document.getElementById('travelPillDot');
+    var timerEl = document.getElementById('travelPillTimer');
+    var docks = [
+      { el: document.getElementById('dockRecord'), name: 'record' },
+      { el: document.getElementById('dockFiling'), name: 'filing' },
+      { el: document.getElementById('dockTranscript'), name: 'transcript' },
+      { el: document.getElementById('dockOffline'), name: 'offline' }
+    ].filter(function (d) { return d.el; });
+    if (!pill || docks.length < 4) return;
+    if (reduceMotion || window.matchMedia('(max-width: 1023px)').matches) return;
+
+    var seconds = 0, recording = false, activeName = null;
+    // Only these two beats ever show the pill. A filed, transcribed call
+    // genuinely isn't "recording" anymore, so per the real app spec the pill
+    // has no reason to still be on screen at Filing/Transcription — it
+    // vanishes there and only comes back once Offline resumes recording,
+    // rather than staying visible-but-dim as an in-between compromise.
+    var VISIBLE_DOCKS = { record: true, offline: true };
+
+    function setRecording(v) {
+      recording = v;
+      if (dotEl) dotEl.classList.toggle('idle-dim', !v);
+    }
+    function resetTimer(v) { seconds = v || 0; render(); }
+    function render() {
+      var m = Math.floor(seconds / 60), s = seconds % 60;
+      if (timerEl) timerEl.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    setInterval(function () { if (recording) { seconds++; render(); } }, 1000);
+    render();
+
+    document.addEventListener('mechanism:state', function (e) {
+      if (activeName !== 'record') return;
+      if (e.detail.state === 'recording') setRecording(true);
+      else if (e.detail.state === 'filed') setRecording(false);
+    });
+
+    function onDockEnter(name) {
+      if (name === 'record') { resetTimer(0); setRecording(mechanismState === 'recording'); }
+      else if (name === 'offline') { resetTimer(41); setRecording(true); }
     }
 
-    var replay = root.querySelector('[data-replay]');
-    if (replay) replay.addEventListener('click', run);
-    autoplayOnce(root, run);
+    function loop() {
+      var vh = window.innerHeight, centerY = vh * 0.5, sigma = vh * 0.32;
+      var weights = [], totalW = 0;
+      var rects = docks.map(function (d) { return d.el.getBoundingClientRect(); });
+      rects.forEach(function (r) {
+        var cy = r.top + r.height / 2;
+        var dist = Math.abs(cy - centerY);
+        var w = Math.exp(-(dist * dist) / (2 * sigma * sigma));
+        weights.push(w); totalW += w;
+      });
+
+      var maxI = 0;
+      for (var i = 1; i < weights.length; i++) if (weights[i] > weights[maxI]) maxI = i;
+      var closest = docks[maxI].name;
+
+      if (totalW < 0.03 || !VISIBLE_DOCKS[closest]) {
+        pill.classList.remove('show');
+      } else {
+        pill.classList.add('show');
+        // position against only the visible docks' weights, so the pill
+        // doesn't drift toward a hidden Filing/Transcript anchor while
+        // traveling between Record and Offline
+        var x = 0, y = 0, visW = 0;
+        rects.forEach(function (r, i) { if (VISIBLE_DOCKS[docks[i].name]) visW += weights[i]; });
+        rects.forEach(function (r, i) {
+          if (!VISIBLE_DOCKS[docks[i].name]) return;
+          var wn = weights[i] / visW;
+          x += (r.left + r.width / 2) * wn;
+          y += (r.top + r.height / 2) * wn;
+        });
+        pill.style.transform = 'translate(' + x + 'px, ' + y + 'px) translate(-50%, -50%)';
+
+        if (closest !== activeName && weights[maxI] / totalW > 0.55) { activeName = closest; onDockEnter(closest); }
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
   }
 
   /* ============================================================
@@ -430,46 +565,59 @@
   }
 
   /* ============================================================
-     Demo 2 — Privacy machine boundary + wifi off. Ported from docs/demos.html.
+     Value stack — scroll list + sticky window-chrome panel, real
+     Lucide icon paths (the app's own icon set, design-system.html).
+     Item 8 ("Searchable call history") folds in the existing
+     auto-filing micro-loop tree demo when it becomes active, rather
+     than dropping that real content.
      ============================================================ */
-  function initDemo2() {
-    var root = document.getElementById('demo-2');
-    if (!root) return;
-    var timers = [];
+  function initValueStackSticky() {
+    var listEl = document.getElementById('sdList');
+    var railEl = document.getElementById('sdRail');
+    if (!listEl || !railEl) return;
 
-    function run() {
-      timers.forEach(clearTimeout); timers = [];
-      var n = [document.getElementById('n1'), document.getElementById('n2'), document.getElementById('n3')];
-      var tg = document.getElementById('tg'), wl = document.getElementById('wl'), st = document.getElementById('st');
-      n.forEach(function (x) { x.classList.remove('act'); });
-      tg.classList.remove('off'); wl.textContent = 'connected'; st.classList.remove('in');
+    var ICONS = {
+      mic: '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>',
+      folder: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+      fileText: '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+      shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+      plug: '<path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="m2 22 3-3"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m18 3-4 4h6l-4 4"/>',
+      type: '<path d="M12 4v16"/><path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2"/><path d="M9 20h6"/>',
+      gift: '<path d="M12 7v14"/><path d="M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"/><rect x="3" y="7" width="18" height="4" rx="1"/>',
+      search: '<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>'
+    };
+    var ITEMS = [
+      { icon: 'mic', title: 'One-button recording', desc: 'Never think about capturing a call again. Press record, everything else is handled.' },
+      { icon: 'folder', title: 'Automatic file naming and filing', desc: 'Never dig through a folder of "recording_47.m4a" files again. Every call is named and filed the second it ends.' },
+      { icon: 'fileText', title: 'Local, on-device transcription', desc: 'Read a call instead of re-listening to it. Skim a transcript in 30 seconds instead of replaying 20 minutes of audio.' },
+      { icon: 'shield', title: 'Fully offline, nothing leaves your machine', desc: 'The other person’s voice never touches a third-party server. Full privacy by default, not a paid upgrade.' },
+      { icon: 'plug', title: 'Works with your existing setup', desc: 'No new hardware, no separate recorder app. It plugs into how you already make calls.' },
+      { icon: 'type', title: 'Custom vocabulary support', desc: 'Stop fighting mangled transcriptions of names, products, and jargon specific to what you do.' },
+      { icon: 'gift', title: 'Free, forever, no account required', desc: 'Everything above, for $0. No card, no login, no future upsell wall.' },
+      { icon: 'search', title: 'Searchable call history', desc: 'Find any call, any conversation, any detail, in seconds, across everything you’ve ever recorded.', microloop: true }
+    ];
 
-      if (reduceMotion) {
-        n.forEach(function (x) { x.classList.add('act'); });
-        tg.classList.add('off'); wl.textContent = 'off'; st.classList.add('in');
-        return;
-      }
-      n.forEach(function (x, i) { timers.push(setTimeout(function () { x.classList.add('act'); }, 600 + i * 700)); });
-      timers.push(setTimeout(function () { tg.classList.add('off'); wl.textContent = 'off'; }, 3000));
-      timers.push(setTimeout(function () { st.classList.add('in'); }, 3600));
-      timers.push(setTimeout(function () {
-        n.forEach(function (x) { x.classList.remove('act'); });
-        n.forEach(function (x, i) { timers.push(setTimeout(function () { x.classList.add('act'); }, i * 700)); });
-      }, 4200));
-    }
+    ITEMS.forEach(function (it, i) {
+      var item = document.createElement('div');
+      item.className = 'sd-item'; item.dataset.index = i;
+      item.innerHTML = '<div class="sd-num">0' + (i + 1) + ' / 0' + ITEMS.length + '</div><h3>' + it.title + '</h3><p>' + it.desc + '</p>';
+      listEl.appendChild(item);
+      var dot = document.createElement('div');
+      dot.className = 'sd-rail-dot'; dot.dataset.index = i;
+      railEl.appendChild(dot);
+    });
 
-    var replay = root.querySelector('[data-replay]');
-    if (replay) replay.addEventListener('click', run);
-    autoplayOnce(root, run);
-  }
+    var iconEl = document.getElementById('sdIcon');
+    var titleEl = document.getElementById('sdTitle');
+    var descEl = document.getElementById('sdDesc');
+    var countEl = document.getElementById('sdCount');
+    var wcTitleEl = document.getElementById('sdWcTitle');
+    var microloopEl = document.getElementById('sdMicroloop');
+    var microloopTreeEl = document.getElementById('sdMicroloopTree');
+    var microloopTimers = [];
+    var current = -1;
 
-  /* ============================================================
-     Micro-loop — auto-filing (Tier 2, ambient, no controls).
-     ============================================================ */
-  function initMicroLoop() {
-    var tree = document.getElementById('tree');
-    if (!tree) return;
-    var rows = [
+    var TREE_ROWS = [
       '<span class="fold">▸ Sales/</span>',
       '&nbsp;&nbsp;<span class="file">2026-07-18-acme-intro.md</span>',
       '&nbsp;&nbsp;<span class="file">2026-07-19-follow-up.md</span>',
@@ -477,18 +625,38 @@
       '<span class="fold">▸ Interviews/</span>',
       '&nbsp;&nbsp;<span class="file">2026-07-16-candidate-b.md</span>'
     ];
-    var timers = [];
-    function run() {
-      timers.forEach(clearTimeout); timers = [];
-      tree.innerHTML = '';
-      rows.forEach(function (r, i) {
+    function runMicroloop() {
+      microloopTimers.forEach(clearTimeout); microloopTimers = [];
+      microloopTreeEl.innerHTML = '';
+      TREE_ROWS.forEach(function (r, i) {
         var d = document.createElement('div'); d.className = 'tr'; d.innerHTML = r;
-        tree.appendChild(d);
+        microloopTreeEl.appendChild(d);
         if (reduceMotion) { d.classList.add('in'); }
-        else { timers.push(setTimeout(function () { d.classList.add('in'); }, 300 + i * 380)); }
+        else { microloopTimers.push(setTimeout(function () { d.classList.add('in'); }, 300 + i * 380)); }
       });
     }
-    autoplayOnce(tree.closest('.demo-wrap') || tree, run);
+
+    function setActive(i) {
+      if (i === current) return;
+      current = i;
+      var it = ITEMS[i];
+      iconEl.innerHTML = ICONS[it.icon];
+      titleEl.textContent = it.title;
+      descEl.textContent = it.desc;
+      countEl.textContent = '0' + (i + 1) + ' / 0' + ITEMS.length;
+      wcTitleEl.textContent = 'debrief — ' + it.title.toLowerCase();
+      microloopEl.hidden = !it.microloop;
+      if (it.microloop) runMicroloop();
+      document.querySelectorAll('.sd-rail-dot').forEach(function (d) { d.classList.toggle('active', Number(d.dataset.index) <= i); });
+      document.querySelectorAll('.sd-item').forEach(function (el) { el.classList.toggle('active', Number(el.dataset.index) === i); });
+    }
+    setActive(0);
+
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) setActive(Number(entry.target.dataset.index)); });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    document.querySelectorAll('.sd-item').forEach(function (el) { io.observe(el); });
   }
 
   /* ---------- Shared autoplay-once-on-scroll-entry helper ---------- */
@@ -506,14 +674,16 @@
   document.addEventListener('DOMContentLoaded', function () {
     initReveals();
     initHeroAnimation();
+    initMechanismPanel();
+    initFilingBeat();
+    initOfflineBeat();
+    initTravelingPill();
     initFaq();
     initCookieBanner();
     initClickTracking();
     initWaitlistForm();
-    initDemo1();
     initDemo4();
     initDemo3();
-    initDemo2();
-    initMicroLoop();
+    initValueStackSticky();
   });
 })();

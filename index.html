@@ -95,6 +95,19 @@
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
+<!-- Traveling companion pill — real floating-pill anatomy, fixed to the
+     viewport, docks to whichever beat is centered as the page scrolls
+     (js/main.js initTravelingPill). Separate from the hero's own still
+     instance below. Decorative/ambient, not content. -->
+<div class="rec-pill travel-pill" id="travelPill" aria-hidden="true" style="position:fixed;">
+  <div class="rec-pill-grip"><div class="dr"><div class="d"></div><div class="d"></div></div><div class="dr"><div class="d"></div><div class="d"></div></div><div class="dr"><div class="d"></div><div class="d"></div></div></div>
+  <div class="rec-pill-dot" id="travelPillDot"></div>
+  <div class="rec-pill-timer" id="travelPillTimer">00:00</div>
+  <div class="rec-pill-btn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+  <div class="rec-pill-btn"><svg viewBox="0 0 24 24" fill="var(--t)"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></div>
+  <div class="rec-pill-btn stop"><div style="width:11px;height:11px;background:#fff;border-radius:2.5px;"></div></div>
+</div>
+
 <main id="main">
 
   <!-- ============ HERO ============ -->
@@ -113,47 +126,81 @@
           <div class="hero-wave-bars" id="heroWaveBars"></div>
           <div class="hero-playhead"></div>
         </div>
+        <!-- Real floating-pill anatomy (grip / rec-dot / timer / mute / pause / stop),
+             recreated from floating-pill-dark-mode-states.html. Per the real spec the
+             pill only exists once a recording is live, so it stays hidden until the
+             click moment (js/main.js initHeroAnimation), same as the app would behave.
+             This instance stays in the hero — it does not join the traveling
+             companion further down the page. -->
         <div class="hero-anim-card-wrap">
-          <div class="hero-anim-card">
-            <div class="had-btn" id="heroAnimBtn" aria-hidden="true"></div>
-            <div class="had-timer" id="heroAnimTimer">00:00</div>
-            <div class="had-status" id="heroAnimStatus">MIC <span id="heroAnimMic">—</span><br>SYSTEM <span id="heroAnimSys">—</span></div>
+          <div class="rec-pill" id="heroPill">
+            <div class="rec-pill-grip"><div class="dr"><div class="d"></div><div class="d"></div></div><div class="dr"><div class="d"></div><div class="d"></div></div><div class="dr"><div class="d"></div><div class="d"></div></div></div>
+            <div class="rec-pill-dot" id="heroPillDot"></div>
+            <div class="rec-pill-timer" id="heroPillTimer">00:00</div>
+            <div class="rec-pill-btn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+            <div class="rec-pill-btn"><svg viewBox="0 0 24 24" fill="var(--t)"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></div>
+            <div class="rec-pill-btn stop"><div style="width:11px;height:11px;background:#fff;border-radius:2.5px;"></div></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ PROBLEM / MECHANISM ============ -->
-  <section class="section-alt" id="problem">
-    <div class="container">
-      <h2 class="pm-heading reveal">Reviewing your calls shouldn't be the hard part</h2>
-      <div class="pm-body reveal">
-        <p>Everyone serious about getting better at what they do already knows they should go back and listen to their calls. Almost nobody actually does it consistently. Not from lack of discipline, the process itself is the problem: remember to hit record, remember to save the file, remember to name it so it's findable later, remember to actually dig it up when you want to review it. After the twentieth call, the system falls apart. Recordings pile up, unnamed and unsorted, and the review that was supposed to make you better never happens.</p>
-        <p class="pm-mechanism">That's the whole mechanism. Debrief captures, transcribes, names, and files every call automatically, so reviewing them stops being a task you have to remember to do.</p>
-      </div>
-
-      <div class="demo-block reveal">
-        <div class="demo-wrap" id="demo-1">
-          <div class="demo-ctl"><button class="btn-ghost" data-replay aria-label="Replay demo: recording and transcribing a call">Replay</button></div>
-          <div class="d1">
-            <div class="d1-left">
-              <div class="rec-btn" id="rb" aria-hidden="true"></div>
-              <div class="rec-timer" id="rt">00:00</div>
-              <div class="wave" id="wv" role="img" aria-label="Live audio waveform"></div>
-              <div class="rec-src" id="rs">MIC <span id="s1">—</span><br>SYSTEM <span id="s2">—</span></div>
-            </div>
-            <div class="d1-right">
-              <div class="file-bar"><span class="dot" id="fd" aria-hidden="true"></span><span id="fn">no active recording</span></div>
-              <div id="tl"></div>
-              <div class="saved" id="sv"><span class="ok">✓</span> saved to ~/Debrief/Sales/2026-07-20-discovery-call.md</div>
+  <!-- ============ PROBLEM / MECHANISM — scroll-narrated, real Record-tab screen ============ -->
+  <section id="problem">
+    <div class="section-sheet section-sheet--first">
+      <div class="pn-row">
+        <div class="pn-text" id="mechanismBeats">
+          <div class="pn-beat reveal in active" data-index="0" data-state="idle">
+            <h2>Reviewing your calls shouldn't be the hard part</h2>
+            <p>Everyone serious about getting better at what they do already knows they should go back and listen to their calls. Almost nobody actually does it consistently.</p>
+          </div>
+          <div class="pn-beat" data-index="1" data-state="recording">
+            <p>Not from lack of discipline, the process itself is the problem: remember to hit record, remember to save the file, remember to name it so it's findable later, remember to actually dig it up when you want to review it. After the twentieth call, the system falls apart. Recordings pile up, unnamed and unsorted, and the review that was supposed to make you better never happens.</p>
+          </div>
+          <div class="pn-beat" data-index="2" data-state="filed">
+            <p class="pm-mechanism">That's the whole mechanism. Debrief captures, transcribes, names, and files every call automatically, so reviewing them stops being a task you have to remember to do.</p>
+          </div>
+        </div>
+        <div class="pn-sticky-wrap reveal in">
+          <div class="appwin">
+            <div class="appwin-bar"><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-title">debrief</span></div>
+            <div class="rt-app">
+              <div class="rt-sidebar">
+                <div class="rt-nav-top">
+                  <div class="rt-nav-item active-box">
+                    <svg class="rt-icon rt-mic-idle" id="rtMicIdle" viewBox="0 0 24 24" fill="none" stroke="#B23A32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                    <div class="rt-rec-dot" id="rtRecDot"></div>
+                  </div>
+                  <div class="rt-nav-item">
+                    <svg class="rt-icon" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                  </div>
+                </div>
+                <div class="rt-nav-item">
+                  <svg class="rt-icon" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+              </div>
+              <div class="rt-main">
+                <div class="rt-status"><span class="rt-status-dot"></span><span id="rtStatusText">Device ready</span></div>
+                <div class="rt-center" id="rtCenter"></div>
+                <div class="rt-recent">
+                  <p class="rt-recent-title">Recent</p>
+                  <div class="rt-recent-row">
+                    <div>
+                      <div class="rt-recent-name" id="rtRecentName">2026-07-14_Acme_Cold</div>
+                      <div class="rt-recent-meta" id="rtRecentMeta">Today, 1:45 PM · 4:12</div>
+                    </div>
+                    <span class="rt-badge" id="rtRecentBadge">Cold call</span>
+                  </div>
+                </div>
+                <span class="dock" id="dockRecord" style="position:absolute; top:50%; right:-1px; width:1px; height:1px;"></span>
+              </div>
             </div>
           </div>
         </div>
-        <p class="demo-caption">That's the entire flow: mic and system audio on, waveform live, transcript typing itself in real time, then filed automatically the second the call ends. Nothing here was clicked more than once.</p>
       </div>
 
-      <div class="demo-block reveal">
+      <div class="demo-block reveal" style="margin-top: var(--sp-8);">
         <div class="demo-wrap" id="demo-4">
           <div class="demo-ctl"><button class="btn-ghost" data-replay aria-label="Replay demo: Debrief auto-detecting a call">Replay</button></div>
           <div class="d4">
@@ -170,71 +217,124 @@
     </div>
   </section>
 
-  <!-- ============ VALUE STACK ============ -->
-  <section id="value-stack">
-    <div class="container">
-      <h2 class="vs-heading reveal">Everything included, none of it optional</h2>
-
-      <div class="vs-grid">
-        <div class="vs-item reveal">
-          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-          <h3>One-button recording</h3>
-          <p>Never think about capturing a call again. Press record, everything else is handled.</p>
+  <!-- ============ FILING ============ -->
+  <section id="filing">
+    <div class="section-sheet">
+      <div class="mo-row reveal">
+        <div class="mo-copy">
+          <div class="eyebrow">Automatic filing</div>
+          <h2>Named and filed before you've even closed the window</h2>
+          <p>No more "recording_47.m4a". Every call gets a real name and a real folder the second it ends.</p>
         </div>
-        <div class="vs-item reveal">
-          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-          <h3>Automatic file naming and filing</h3>
-          <p>Never dig through a folder of "recording_47.m4a" files again. Every call is named and filed the second it ends.</p>
-        </div>
-        <div class="vs-item reveal">
-          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-          <h3>Local, on-device transcription</h3>
-          <p>Read a call instead of re-listening to it. Skim a transcript in 30 seconds instead of replaying 20 minutes of audio.</p>
-        </div>
-        <div class="vs-item reveal">
-          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-          <h3>Fully offline, nothing leaves your machine</h3>
-          <p>The other person's voice never touches a third-party server. Full privacy by default, not a paid upgrade. <a class="link-slide" href="local-transcription/">See how it actually works</a>.</p>
-        </div>
-        <div class="vs-item reveal">
-          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-          <h3>Works with your existing setup</h3>
-          <p>No new hardware, no separate recorder app. It plugs into how you already make calls.</p>
-        </div>
-        <div class="vs-item reveal">
-          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-          <h3>Custom vocabulary support</h3>
-          <p>Stop fighting mangled transcriptions of names, products, and jargon specific to what you do.</p>
-        </div>
-        <div class="vs-item reveal">
-          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-          <h3>Free, forever, no account required</h3>
-          <p>Everything above, for $0. No card, no login, no future upsell wall.</p>
-        </div>
-
-        <!-- Searchable call history pairs with the auto-filing micro-loop (Doc 06 §8 / Doc 10 Phase 3;
-             Doc 07's inline note ties the micro-loop to this item instead of "auto-filing" above,
-             kept on the semantically-fitting item per the majority reading, flagged as a doc
-             inconsistency worth a look, not a build blocker). -->
-        <div class="vs-item vs-closer reveal">
-          <div class="vs-closer-inner">
-            <div class="vs-closer-copy">
-              <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
-              <h3>Searchable call history</h3>
-              <p>Find any call, any conversation, any detail, in seconds, across everything you've ever recorded.</p>
-            </div>
-            <div class="vs-microloop-row">
-              <div class="ml" id="microloop">
-                <div class="ml-lbl">~/DEBRIEF</div>
-                <div class="tree" id="tree"></div>
+        <div class="mo-visual-wrap" id="filingBeat">
+          <div class="appwin">
+            <div class="appwin-bar"><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-title">~/Debrief/Sales</span></div>
+            <div style="padding: 6px var(--sp-4);">
+              <div class="fin-row new" id="finNewRow">
+                <svg class="fin-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                <span class="fin-name">2026-07-20-discovery-call.md</span><span class="fin-meta">Just now</span>
+              </div>
+              <div class="fin-row">
+                <svg class="fin-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                <span class="fin-name">2026-07-18-demo-follow-up.md</span><span class="fin-meta">2 days ago</span>
+              </div>
+              <div class="fin-row">
+                <svg class="fin-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                <span class="fin-name">2026-07-17-onboarding-call.md</span><span class="fin-meta">3 days ago</span>
+              </div>
+              <div class="fin-row">
+                <svg class="fin-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                <span class="fin-name">2026-07-14-acme-cold.md</span><span class="fin-meta">6 days ago</span>
               </div>
             </div>
+          </div>
+          <span class="dock" id="dockFiling" style="position:absolute; top:50%; right:-1px; width:1px; height:1px;"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRANSCRIPTION ============ -->
+  <section id="transcription">
+    <div class="section-sheet">
+      <div class="mo-row reveal">
+        <div class="mo-copy">
+          <div class="eyebrow">On-device transcription</div>
+          <h2>Read it back instead of listening to it again</h2>
+          <p>A full transcript, generated locally, the moment the call ends. Skim in 30 seconds what took 20 minutes to say.</p>
+        </div>
+        <div class="mo-visual-wrap" id="transcriptBeat">
+          <div class="appwin">
+            <div class="appwin-bar"><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-title">2026-07-20-discovery-call.md</span></div>
+            <div style="padding: var(--sp-5);">
+              <div class="tr-line"><span class="tr-who you">You</span><p class="tr-text">Walk me through where the budget conversation stalled last time.</p></div>
+              <div class="tr-line"><span class="tr-who">Them</span><p class="tr-text">Honestly, it was the implementation timeline, not the price itself.</p></div>
+              <div class="tr-line"><span class="tr-who you">You</span><p class="tr-text">Got it. If we shortened that to two weeks instead of six?</p></div>
+              <div class="tr-line"><span class="tr-who">Them</span><p class="tr-text">That changes things. Let me check with my team.</p></div>
+            </div>
+          </div>
+          <span class="dock" id="dockTranscript" style="position:absolute; top:50%; right:-1px; width:1px; height:1px;"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OFFLINE ============ -->
+  <section id="offline">
+    <div class="section-sheet">
+      <div class="mo-row reveal">
+        <div class="mo-copy">
+          <div class="eyebrow">Fully offline</div>
+          <h2>Turn off the Wi-Fi. Keep recording.</h2>
+          <p>Nothing about this depends on a connection. Recording and transcription both happen on your machine, online or not.</p>
+        </div>
+        <div class="mo-visual-wrap" id="offlineBeat">
+          <div class="appwin">
+            <div class="appwin-bar"><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-title">settings — general</span></div>
+            <div style="padding: var(--sp-5);">
+              <div class="off-row">
+                <div>
+                  <div class="off-label">Wi-Fi</div>
+                  <div class="off-sub" id="offSub">Connected</div>
+                </div>
+                <div class="tog" id="offToggle"><div class="knob"></div></div>
+              </div>
+              <div class="off-wave" id="offWave"></div>
+              <div class="off-wave-cap">still recording — 00:41</div>
+            </div>
+          </div>
+          <span class="dock" id="dockOffline" style="position:absolute; top:50%; right:-1px; width:1px; height:1px;"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VALUE STACK ============ -->
+  <section id="value-stack">
+    <div class="section-sheet">
+      <h2 class="vs-heading reveal">Everything included, none of it optional</h2>
+      <p class="vs-sub reveal">All eight items, one at a time.</p>
+
+      <div class="sd-row">
+        <div class="sd-list reveal" id="sdList"></div>
+        <div class="sd-sticky-wrap reveal">
+          <div class="appwin">
+            <div class="appwin-bar"><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-dot"></span><span class="appwin-title" id="sdWcTitle">debrief</span></div>
+            <div class="sd-icon-wrap"><svg class="sd-icon" id="sdIcon" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></div>
+            <h3 class="sd-title" id="sdTitle"></h3>
+            <p class="sd-desc" id="sdDesc"></p>
+            <div class="ml sd-microloop" id="sdMicroloop" hidden>
+              <div class="ml-lbl">~/DEBRIEF</div>
+              <div class="tree" id="sdMicroloopTree"></div>
+            </div>
+            <div class="sd-rail" id="sdRail"></div>
+            <div class="sd-count" id="sdCount"></div>
           </div>
         </div>
       </div>
 
       <!-- Value stack closer: AI call feedback prompt, biggest item, gets Demo 3 -->
-      <div class="vs-item vs-closer reveal" style="margin-bottom: var(--sp-7);">
+      <div class="vs-ai-closer reveal">
         <div class="vs-closer-inner">
           <div class="vs-closer-copy">
             <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
@@ -265,12 +365,17 @@
 
       <!-- Verify the $10-$20/month anchor figure against current Otter.ai/Fireflies pricing before launch (Doc 07). -->
       <p class="vs-stack-close reveal">Any one of these is worth paying for. Together, this is normally a <b>$10 to $20 a month</b> subscription elsewhere. Debrief is free.</p>
+
+      <div class="vs-cta-row reveal">
+        <p>Convinced? You don't have to scroll back up.</p>
+        <a class="btn-primary" href="#waitlist" data-track="cta_click" data-location="value_stack">Join the waitlist</a>
+      </div>
     </div>
   </section>
 
   <!-- ============ FAQ ============ -->
-  <section class="section-alt" id="faq">
-    <div class="container">
+  <section id="faq">
+    <div class="section-sheet">
       <h2 class="reveal" style="margin-bottom: var(--sp-6);">Questions, answered straight</h2>
       <div class="faq-list reveal">
         <div class="faq-item">
@@ -314,7 +419,7 @@
 
   <!-- ============ WAITLIST FORM ============ -->
   <section id="waitlist">
-    <div class="container waitlist-inner">
+    <div class="section-sheet waitlist-inner">
       <h2 class="reveal">Get the download link the moment it's ready</h2>
       <div class="waitlist-form reveal">
         <!-- TODO: replace with the real ConvertKit form action URL and hidden fields once the form is created (Doc 10 Phase 7). -->
@@ -349,11 +454,6 @@ one click.</p>
       <a href="local-transcription/">How it stays private</a>
     </div>
     <p class="footer-fielder">Also building Fielder, tools for trades businesses, if that's relevant to you.</p>
-    <div class="footer-socials">
-      <!-- TODO: real social profile URLs needed, not fabricated. Placeholders until supplied. -->
-      <a href="#" aria-label="Instagram">Instagram</a>
-      <a href="#" aria-label="TikTok">TikTok</a>
-    </div>
   </div>
 </footer>
 
