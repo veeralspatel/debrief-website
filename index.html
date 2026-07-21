@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" data-ga-id="G-XXXXXXXXXX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debrief — Free, Open Source Call Recorder &amp; Transcriber</title>
+<meta name="description" content="Free call recording and transcription for Mac and Windows. No minute caps, no cloud, no account. Open source, runs on your device.">
+<link rel="canonical" href="https://debrief.veeralspatel.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Debrief — Free, Open Source Call Recorder &amp; Transcriber">
+<meta property="og:description" content="Free call recording and transcription for Mac and Windows. No minute caps, no cloud, no account. Open source, runs on your device.">
+<meta property="og:url" content="https://debrief.veeralspatel.com/">
+<meta property="og:image" content="https://debrief.veeralspatel.com/images/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Debrief — Free, Open Source Call Recorder &amp; Transcriber">
+<meta name="twitter:description" content="Free call recording and transcription for Mac and Windows. No minute caps, no cloud, no account. Open source, runs on your device.">
+<meta name="twitter:image" content="https://debrief.veeralspatel.com/images/og-banner.png">
+
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Debrief",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "macOS, Windows",
+  "description": "Free, open source desktop call recorder and transcriber. Records, transcribes, names, and files every call automatically, entirely on your own device.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "license": "https://opensource.org/licenses/MIT"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Debrief really free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. No card, no account, no trial that expires, no feature paywall waiting on the other side. It's fully open source under the MIT license, so nothing is hidden."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do my recordings go, is anything uploaded?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nowhere but your own computer. Recording and transcription both happen locally, nothing is uploaded, nothing touches a third-party server."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why not just use Otter, Gong, or Fireflies?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Those tools are built for teams and general meetings that happen to include a call sometimes. Debrief is built specifically for the call you're trying to get better at, free, local, with none of the account, cost, or privacy trade-offs of sending your calls to someone else's server."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What platforms does it work on?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mac and Windows."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When can I actually download it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Soon. Join the waitlist and you'll get the download link the moment it's ready, no earlier promise than that."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy reveal in">
+        <div class="eyebrow"><span class="rec-dot" aria-hidden="true"></span>OPEN SOURCE · MAC + WINDOWS</div>
+        <h1>Press record. Everything else happens on its own.</h1>
+        <p class="lead">Debrief runs entirely on your machine. No minute caps, no upload, no account. Just the calls you actually need to remember.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#waitlist" data-track="cta_click" data-location="hero">Join the waitlist</a>
+        </div>
+      </div>
+      <div class="hero-frag-wrap reveal in">
+        <div class="fragment tilt fade-bottom hero-frag" data-parallax>
+          <div class="frag-rec-row">
+            <div class="frag-rec-btn" aria-hidden="true"></div>
+            <div class="frag-timer">04:12</div>
+            <div class="frag-status">MIC <span class="on">ON</span><br>SYSTEM <span class="on">ON</span></div>
+          </div>
+          <div class="frag-lines">
+            <div class="frag-line">
+              <span class="frag-time">03:58</span>
+              <span class="frag-text"><span class="frag-speaker">You</span>So walk me through where things stalled last quarter.</span>
+            </div>
+            <div class="frag-line">
+              <span class="frag-time">04:06</span>
+              <span class="frag-text"><span class="frag-speaker b">Prospect</span>Honestly, it was more of a budget timing thing than anything else.</span>
+            </div>
+            <div class="frag-line">
+              <span class="frag-time">04:12</span>
+              <span class="frag-text"><span class="frag-speaker">You</span>Got it. And if budget wasn't the constraint right now...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROBLEM / MECHANISM ============ -->
+  <section class="section-alt" id="problem">
+    <div class="container">
+      <h2 class="pm-heading reveal">Reviewing your calls shouldn't be the hard part</h2>
+      <div class="pm-body reveal">
+        <p>Everyone serious about getting better at what they do already knows they should go back and listen to their calls. Almost nobody actually does it consistently. Not from lack of discipline, the process itself is the problem: remember to hit record, remember to save the file, remember to name it so it's findable later, remember to actually dig it up when you want to review it. After the twentieth call, the system falls apart. Recordings pile up, unnamed and unsorted, and the review that was supposed to make you better never happens.</p>
+        <p class="pm-mechanism">That's the whole mechanism. Debrief captures, transcribes, names, and files every call automatically, so reviewing them stops being a task you have to remember to do.</p>
+      </div>
+
+      <div class="demo-block reveal">
+        <div class="demo-wrap" id="demo-1">
+          <div class="demo-ctl"><button class="btn-ghost" data-replay aria-label="Replay demo: recording and transcribing a call">Replay</button></div>
+          <div class="d1">
+            <div class="d1-left">
+              <div class="rec-btn" id="rb" aria-hidden="true"></div>
+              <div class="rec-timer" id="rt">00:00</div>
+              <div class="wave" id="wv" role="img" aria-label="Live audio waveform"></div>
+              <div class="rec-src" id="rs">MIC <span id="s1">—</span><br>SYSTEM <span id="s2">—</span></div>
+            </div>
+            <div class="d1-right">
+              <div class="file-bar"><span class="dot" id="fd" aria-hidden="true"></span><span id="fn">no active recording</span></div>
+              <div id="tl"></div>
+              <div class="saved" id="sv"><span class="ok">✓</span> saved to ~/Debrief/Sales/2026-07-20-discovery-call.md</div>
+            </div>
+          </div>
+        </div>
+        <p class="demo-caption">That's the entire flow: mic and system audio on, waveform live, transcript typing itself in real time, then filed automatically the second the call ends. Nothing here was clicked more than once.</p>
+      </div>
+
+      <div class="demo-block reveal">
+        <div class="demo-wrap" id="demo-4">
+          <div class="demo-ctl"><button class="btn-ghost" data-replay aria-label="Replay demo: Debrief auto-detecting a call">Replay</button></div>
+          <div class="d4">
+            <div class="d4-cap" id="c4">you didn't touch anything · <b>Debrief started itself</b></div>
+            <div class="callwin" id="cw">
+              <div class="cw-bar"><span class="cw-dot"></span><span class="cw-dot"></span><span class="cw-dot"></span><span class="cw-title">call in progress</span></div>
+              <div class="cw-body"><div class="cw-tile">you</div><div class="cw-tile">prospect</div></div>
+            </div>
+            <div class="pill" id="pl"><span class="pill-dot" aria-hidden="true"></span><span class="pill-t">00:00</span><span class="pill-x">▮▮</span></div>
+          </div>
+        </div>
+        <p class="demo-caption">Debrief can also notice a call window opening and start recording before you'd have remembered to hit the button yourself. One less thing to forget.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VALUE STACK ============ -->
+  <section id="value-stack">
+    <div class="container">
+      <h2 class="vs-heading reveal">Everything included, none of it optional</h2>
+
+      <div class="vs-grid">
+        <div class="vs-item reveal">
+          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          <h3>One-button recording</h3>
+          <p>Never think about capturing a call again. Press record, everything else is handled.</p>
+        </div>
+        <div class="vs-item reveal">
+          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          <h3>Automatic file naming and filing</h3>
+          <p>Never dig through a folder of "recording_47.m4a" files again. Every call is named and filed the second it ends.</p>
+        </div>
+        <div class="vs-item reveal">
+          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          <h3>Local, on-device transcription</h3>
+          <p>Read a call instead of re-listening to it. Skim a transcript in 30 seconds instead of replaying 20 minutes of audio.</p>
+        </div>
+        <div class="vs-item reveal">
+          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          <h3>Fully offline, nothing leaves your machine</h3>
+          <p>The other person's voice never touches a third-party server. Full privacy by default, not a paid upgrade. <a class="link-slide" href="local-transcription/">See how it actually works</a>.</p>
+        </div>
+        <div class="vs-item reveal">
+          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          <h3>Works with your existing setup</h3>
+          <p>No new hardware, no separate recorder app. It plugs into how you already make calls.</p>
+        </div>
+        <div class="vs-item reveal">
+          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          <h3>Custom vocabulary support</h3>
+          <p>Stop fighting mangled transcriptions of names, products, and jargon specific to what you do.</p>
+        </div>
+        <div class="vs-item reveal">
+          <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+          <h3>Free, forever, no account required</h3>
+          <p>Everything above, for $0. No card, no login, no future upsell wall.</p>
+        </div>
+
+        <!-- Searchable call history pairs with the auto-filing micro-loop (Doc 06 §8 / Doc 10 Phase 3;
+             Doc 07's inline note ties the micro-loop to this item instead of "auto-filing" above,
+             kept on the semantically-fitting item per the majority reading, flagged as a doc
+             inconsistency worth a look, not a build blocker). -->
+        <div class="vs-item vs-closer reveal">
+          <div class="vs-closer-inner">
+            <div class="vs-closer-copy">
+              <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+              <h3>Searchable call history</h3>
+              <p>Find any call, any conversation, any detail, in seconds, across everything you've ever recorded.</p>
+            </div>
+            <div class="vs-microloop-row">
+              <div class="ml" id="microloop">
+                <div class="ml-lbl">~/DEBRIEF</div>
+                <div class="tree" id="tree"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Value stack closer: AI call feedback prompt, biggest item, gets Demo 3 -->
+      <div class="vs-item vs-closer reveal" style="margin-bottom: var(--sp-7);">
+        <div class="vs-closer-inner">
+          <div class="vs-closer-copy">
+            <svg class="vs-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8"/></svg>
+            <h3>Included AI call feedback prompt</h3>
+            <p>A transcript alone doesn't make you better, feedback on it does. Paste your call into any AI assistant with the included prompt and get real coaching: what went well, where you lost control, how you handled objections, pacing notes.</p>
+          </div>
+          <div class="vs-closer-demo">
+            <div class="demo-wrap" id="demo-3">
+              <div class="demo-ctl"><button class="btn-ghost" data-replay aria-label="Replay demo: AI call feedback">Replay</button></div>
+              <div class="d3">
+                <div class="d3-file" id="f3">
+                  <div class="d3-fname"><span style="color:var(--blue)">◆</span>2026-07-20-discovery.md</div>
+                  <div class="d3-fline" style="width:100%"></div><div class="d3-fline" style="width:82%"></div>
+                  <div class="d3-fline" style="width:94%"></div><div class="d3-fline" style="width:60%"></div>
+                  <div class="d3-fline" style="width:88%"></div><div class="d3-fline" style="width:45%"></div>
+                </div>
+                <div class="arrow-fly" id="ar3" aria-hidden="true">→</div>
+                <div class="d3-chat">
+                  <div class="chat-lbl">ANY AI ASSISTANT</div>
+                  <div class="chat-msg" id="m3"><span class="attach">◆ 2026-07-20-discovery.md</span>Here's the transcript of my sales call. Where did I lose control of the conversation?</div>
+                  <div id="fbs"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verify the $10-$20/month anchor figure against current Otter.ai/Fireflies pricing before launch (Doc 07). -->
+      <p class="vs-stack-close reveal">Any one of these is worth paying for. Together, this is normally a <b>$10 to $20 a month</b> subscription elsewhere. Debrief is free.</p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section-alt" id="faq">
+    <div class="container">
+      <h2 class="reveal" style="margin-bottom: var(--sp-6);">Questions, answered straight</h2>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-a-1">
+            Is Debrief really free?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="faq-a-1"><div class="faq-a-inner"><p class="faq-a">Yes. No card, no account, no trial that expires, no feature paywall waiting on the other side. It's fully open source under the MIT license, so nothing is hidden.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-a-2">
+            Where do my recordings go, is anything uploaded?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="faq-a-2"><div class="faq-a-inner"><p class="faq-a">Nowhere but your own computer. Recording and transcription both happen locally, nothing is uploaded, nothing touches a third-party server.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-a-3">
+            Why not just use Otter, Gong, or Fireflies?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="faq-a-3"><div class="faq-a-inner"><p class="faq-a">Those tools are built for teams and general meetings that happen to include a call sometimes. Debrief is built specifically for the call you're trying to get better at, free, local, with none of the account, cost, or privacy trade-offs of sending your calls to someone else's server.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-a-4">
+            What platforms does it work on?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="faq-a-4"><div class="faq-a-inner"><p class="faq-a">Mac and Windows.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq-a-5">
+            When can I actually download it?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="faq-a-5"><div class="faq-a-inner"><p class="faq-a">Soon. Join the waitlist and you'll get the download link the moment it's ready, no earlier promise than that.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WAITLIST FORM ============ -->
+  <section id="waitlist">
+    <div class="container waitlist-inner">
+      <h2 class="reveal">Get the download link the moment it's ready</h2>
+      <div class="waitlist-form reveal">
+        <!-- TODO: replace with the real ConvertKit form action URL and hidden fields once the form is created (Doc 10 Phase 7). -->
+        <form id="waitlist-form" action="https://app.convertkit.com/forms/REPLACE_WITH_FORM_ID/subscriptions" method="post" novalidate>
+          <div class="ck-form-wrap">
+            <div class="field-group">
+              <label class="visually-hidden" for="email_address">Email address</label>
+              <input class="field" type="email" id="email_address" name="email_address" placeholder="you@work.com" required autocomplete="email">
+              <span class="field-error"></span>
+            </div>
+            <button class="btn-primary" type="submit" data-track="cta_click" data-location="waitlist_form">Join the waitlist</button>
+          </div>
+          <p class="risk-reversal">No spam. You'll get the download link the moment Debrief is ready, then a handful
+of real emails over the next couple weeks, no pitch, just useful stuff. After that
+I'll leave you alone until there's something worth saying. Unsubscribe anytime,
+one click.</p>
+        </form>
+        <div class="waitlist-success" id="waitlist-success">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L19 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          <span>You're on the list. Check your inbox in a minute.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-links">
+      <a href="https://github.com/veeralspatel/debrief" data-track="outbound_github_click">GitHub ↗</a>
+      <a href="local-transcription/">How it stays private</a>
+    </div>
+    <p class="footer-fielder">Also building Fielder, tools for trades businesses, if that's relevant to you.</p>
+    <div class="footer-socials">
+      <!-- TODO: real social profile URLs needed, not fabricated. Placeholders until supplied. -->
+      <a href="#" aria-label="Instagram">Instagram</a>
+      <a href="#" aria-label="TikTok">TikTok</a>
+    </div>
+  </div>
+</footer>
+
+<div class="cookie-banner" id="cookie-banner" hidden>
+  <div class="cookie-inner">
+    <p class="cookie-text">This site uses cookies for analytics and the waitlist signup.</p>
+    <div class="cookie-actions">
+      <button class="btn-ghost" id="cookie-reject">Reject</button>
+      <button class="btn-primary" id="cookie-accept">Accept</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

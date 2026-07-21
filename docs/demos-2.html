@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Debrief — Demo Components 3, 4 + micro-loop</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0A0A0B;--s1:#131315;--s2:#151517;--bd:#232326;--bdh:#2E2E32;
+  --t:#F2F2F7;--t2:#98989D;--t3:#6C6C70;--t4:#48484A;--blue:#0A84FF;--red:#FF3B30;--green:#30D158;
+  --sans:'IBM Plex Sans',-apple-system,sans-serif;--mono:'JetBrains Mono',monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--t);padding:40px 5vw 100px}
+  .doc-h{font-size:24px;font-weight:600;letter-spacing:-0.02em;margin-bottom:4px}
+  .doc-sub{font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:40px}
+  .sec-t{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--t3);padding-bottom:10px;border-bottom:1px solid var(--bd);margin-bottom:8px}
+  .note{font-size:13px;color:var(--t3);line-height:1.6;max-width:680px;margin-bottom:24px}
+  .demo-wrap{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:32px;margin-bottom:56px;position:relative}
+  .btn-ghost{font-family:var(--sans);font-size:13px;font-weight:500;padding:9px 18px;border-radius:7px;background:transparent;color:var(--t2);border:1px solid var(--bd);cursor:pointer;transition:all 150ms ease}
+  .btn-ghost:hover{border-color:var(--bdh);color:var(--t)}
+  .demo-ctl{position:absolute;top:24px;right:24px;z-index:5}
+
+  /* D3 — AI feedback */
+  .d3{display:flex;gap:26px;align-items:flex-start;min-height:300px}
+  .d3-file{width:220px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:16px;flex-shrink:0;transition:border-color 300ms ease,transform 400ms ease}
+  .d3-file.lift{border-color:var(--blue);transform:translateY(-3px)}
+  .d3-fname{font-family:var(--mono);font-size:10.5px;color:var(--t4);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+  .d3-fline{height:5px;background:#232326;border-radius:3px;margin-bottom:7px}
+  .arrow-fly{align-self:center;font-family:var(--mono);font-size:18px;color:var(--t4);opacity:0.3;transition:opacity 400ms ease,transform 400ms ease}
+  .arrow-fly.go{opacity:1;color:var(--blue);transform:translateX(4px)}
+  .d3-chat{flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:18px 20px;min-height:280px;display:flex;flex-direction:column}
+  .chat-lbl{font-family:var(--mono);font-size:9.5px;color:var(--t4);letter-spacing:0.08em;padding-bottom:12px;border-bottom:1px solid var(--bd);margin-bottom:14px}
+  .chat-msg{background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:11px 13px;font-size:12.5px;color:var(--t2);margin-bottom:14px;opacity:0;transform:translateY(4px);transition:all 300ms ease}
+  .chat-msg.in{opacity:1;transform:none}
+  .chat-msg .attach{font-family:var(--mono);font-size:10px;color:var(--blue);display:block;margin-bottom:6px}
+  .fb{opacity:0;transform:translateY(4px);transition:all 300ms ease;margin-bottom:11px}
+  .fb.in{opacity:1;transform:none}
+  .fb-h{font-size:12px;font-weight:600;color:var(--t);margin-bottom:5px;display:flex;align-items:center;gap:7px}
+  .fb-h .n{font-family:var(--mono);font-size:9.5px;color:var(--t4);border:1px solid var(--bd);border-radius:4px;padding:1px 5px}
+  .fb-b{font-size:12.5px;color:var(--t3);line-height:1.55;padding-left:26px}
+  .cursor{display:inline-block;width:7px;height:13px;background:var(--blue);vertical-align:-2px;animation:bl 1s step-end infinite}
+  @keyframes bl{50%{opacity:0}}
+
+  /* D4 — auto detect */
+  .d4{position:relative;min-height:300px;display:flex;align-items:center;justify-content:center}
+  .callwin{width:420px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;overflow:hidden;opacity:0;transform:scale(0.97);transition:all 450ms ease}
+  .callwin.in{opacity:1;transform:none}
+  .cw-bar{background:#1A1A1D;padding:9px 13px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bd)}
+  .cw-dot{width:9px;height:9px;border-radius:50%;background:#2E2E32}
+  .cw-title{font-family:var(--mono);font-size:10px;color:var(--t4);margin-left:8px}
+  .cw-body{padding:22px;display:flex;gap:12px;justify-content:center}
+  .cw-tile{width:110px;height:74px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9.5px;color:var(--t4)}
+  .pill{position:absolute;bottom:26px;right:32px;background:#1A1A1D;border:1px solid var(--bd);border-radius:22px;padding:9px 15px;display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(10px);transition:all 400ms cubic-bezier(0.2,0.8,0.3,1);box-shadow:0 12px 30px rgba(0,0,0,0.5)}
+  .pill.in{opacity:1;transform:none}
+  .pill-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pl 1.6s ease-in-out infinite}
+  @keyframes pl{0%,100%{opacity:1}50%{opacity:0.3}}
+  .pill-t{font-family:var(--mono);font-size:12px;color:var(--t)}
+  .pill-x{font-size:11px;color:var(--t4)}
+  .d4-cap{position:absolute;top:8px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--t4);opacity:0;transition:opacity 400ms ease}
+  .d4-cap.in{opacity:1}
+  .d4-cap b{color:var(--green);font-weight:400}
+
+  /* Micro-loop — auto filing */
+  .ml{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:24px 28px;width:380px}
+  .ml-lbl{font-family:var(--mono);font-size:9.5px;color:var(--t4);letter-spacing:0.08em;margin-bottom:14px}
+  .tree{font-family:var(--mono);font-size:11.5px;line-height:2}
+  .tr{color:var(--t3);opacity:0;transform:translateX(-4px);transition:all 260ms ease}
+  .tr.in{opacity:1;transform:none}
+  .tr .fold{color:var(--t2)}
+  .tr .file{color:var(--t4)}
+  .tr .new{color:var(--green)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="doc-h">Demo components 3, 4 + micro-loop</div>
+<div class="doc-sub">Doc 06 companion · third-party chat UI rendered generically, no branding</div>
+
+<div class="sec-t">Demo 3 · AI feedback (value stack closer)</div>
+<div class="note">Proves the biggest item in the stack, which is currently invisible on the page. Transcript file lifts, moves into a neutral chat panel, feedback streams back as structured notes. Deliberately unbranded, no Claude/ChatGPT chrome, no implied partnership.</div>
+<div class="demo-wrap">
+  <div class="demo-ctl"><button class="btn-ghost" onclick="runD3()">Replay</button></div>
+  <div class="d3">
+    <div class="d3-file" id="f3">
+      <div class="d3-fname"><span style="color:var(--blue)">◆</span>2026-07-20-discovery.md</div>
+      <div class="d3-fline" style="width:100%"></div><div class="d3-fline" style="width:82%"></div>
+      <div class="d3-fline" style="width:94%"></div><div class="d3-fline" style="width:60%"></div>
+      <div class="d3-fline" style="width:88%"></div><div class="d3-fline" style="width:45%"></div>
+    </div>
+    <div class="arrow-fly" id="ar3">→</div>
+    <div class="d3-chat">
+      <div class="chat-lbl">ANY AI ASSISTANT</div>
+      <div class="chat-msg" id="m3"><span class="attach">◆ 2026-07-20-discovery.md</span>Here's the transcript of my sales call. Where did I lose control of the conversation?</div>
+      <div id="fbs"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-t">Demo 4 · Auto-detect (zero setup)</div>
+<div class="note">Kills the "will I remember to hit record?" objection. A call window opens, the pill appears on its own and starts recording. Nobody clicked anything.</div>
+<div class="demo-wrap">
+  <div class="demo-ctl"><button class="btn-ghost" onclick="runD4()">Replay</button></div>
+  <div class="d4">
+    <div class="d4-cap" id="c4">you didn't touch anything · <b>Debrief started itself</b></div>
+    <div class="callwin" id="cw">
+      <div class="cw-bar"><span class="cw-dot"></span><span class="cw-dot"></span><span class="cw-dot"></span><span class="cw-title">call in progress</span></div>
+      <div class="cw-body"><div class="cw-tile">you</div><div class="cw-tile">prospect</div></div>
+    </div>
+    <div class="pill" id="pl"><span class="pill-dot"></span><span class="pill-t">00:03</span><span class="pill-x">▮▮</span></div>
+  </div>
+</div>
+
+<div class="sec-t">Micro-loop · Auto-filing (Tier 2, sits beside a value stack item)</div>
+<div class="note">No controls, no replay button, just quietly loops. Makes "auto-filed markdown" concrete without spending a full demo slot on it.</div>
+<div class="demo-wrap" style="display:flex;justify-content:center">
+  <div class="ml">
+    <div class="ml-lbl">~/DEBRIEF</div>
+    <div class="tree" id="tree"></div>
+  </div>
+</div>
+
+<script>
+var fbItems=[
+ {n:'01',h:'You answered the price question too early',b:'At 04:12 they asked about cost before you framed value. You quoted immediately.'},
+ {n:'02',h:'Three questions went unanswered',b:'Their integration concern at 07:30 never got a direct response.'},
+ {n:'03',h:'Strong close, weak next step',b:'You booked a follow-up but left the date open. They set the agenda, not you.'}
+];
+var t3a=[];
+function runD3(){
+ t3a.forEach(clearTimeout);t3a=[];
+ var f=document.getElementById('f3'),ar=document.getElementById('ar3'),m=document.getElementById('m3'),fbs=document.getElementById('fbs');
+ f.classList.remove('lift');ar.classList.remove('go');m.classList.remove('in');fbs.innerHTML='';
+ t3a.push(setTimeout(function(){f.classList.add('lift')},500));
+ t3a.push(setTimeout(function(){ar.classList.add('go')},900));
+ t3a.push(setTimeout(function(){m.classList.add('in')},1400));
+ t3a.push(setTimeout(function(){
+   var c=document.createElement('div');c.className='fb in';c.innerHTML='<div class="fb-b"><span class="cursor"></span></div>';
+   c.id='typing';fbs.appendChild(c);
+ },2100));
+ fbItems.forEach(function(it,i){
+   t3a.push(setTimeout(function(){
+     var ty=document.getElementById('typing');if(ty&&i===0)ty.remove();
+     var d=document.createElement('div');d.className='fb';
+     d.innerHTML='<div class="fb-h"><span class="n">'+it.n+'</span>'+it.h+'</div><div class="fb-b">'+it.b+'</div>';
+     fbs.appendChild(d);setTimeout(function(){d.classList.add('in')},30);
+   },2900+i*1100));
+ });
+ t3a.push(setTimeout(function(){f.classList.remove('lift');ar.classList.remove('go')},6500));
+}
+var t4a=[],pt;
+function runD4(){
+ t4a.forEach(clearTimeout);t4a=[];clearInterval(pt);
+ var cw=document.getElementById('cw'),pl=document.getElementById('pl'),c4=document.getElementById('c4');
+ cw.classList.remove('in');pl.classList.remove('in');c4.classList.remove('in');
+ pl.querySelector('.pill-t').textContent='00:00';
+ t4a.push(setTimeout(function(){cw.classList.add('in')},600));
+ t4a.push(setTimeout(function(){
+   pl.classList.add('in');var s=0;
+   pt=setInterval(function(){s++;pl.querySelector('.pill-t').textContent='00:'+(s<10?'0':'')+s},1000);
+ },1700));
+ t4a.push(setTimeout(function(){c4.classList.add('in')},2600));
+}
+var treeRows=[
+ '<span class="fold">▸ Sales/</span>',
+ '&nbsp;&nbsp;<span class="file">2026-07-18-acme-intro.md</span>',
+ '&nbsp;&nbsp;<span class="file">2026-07-19-follow-up.md</span>',
+ '&nbsp;&nbsp;<span class="new">2026-07-20-discovery.md</span>',
+ '<span class="fold">▸ Interviews/</span>',
+ '&nbsp;&nbsp;<span class="file">2026-07-16-candidate-b.md</span>'
+];
+var tt=[];
+function runTree(){
+ tt.forEach(clearTimeout);tt=[];
+ var tr=document.getElementById('tree');tr.innerHTML='';
+ treeRows.forEach(function(r,i){
+   var d=document.createElement('div');d.className='tr';d.innerHTML=r;tr.appendChild(d);
+   tt.push(setTimeout(function(){d.classList.add('in')},300+i*380));
+ });
+}
+runD3();runD4();runTree();
+setInterval(runD3,10000);
+setInterval(runD4,7500);
+setInterval(runTree,5200);
+</script>
+</body>
+</html>

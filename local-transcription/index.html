@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-ga-id="G-XXXXXXXXXX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Offline, Open Source Call Transcription, No Cloud — Debrief</title>
+<meta name="description" content="Debrief transcribes calls entirely offline, nothing uploaded. Open source call recorder for Mac and Windows, verify the code yourself on GitHub.">
+<link rel="canonical" href="https://debrief.veeralspatel.com/local-transcription/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Offline, Open Source Call Transcription, No Cloud — Debrief">
+<meta property="og:description" content="Debrief transcribes calls entirely offline, nothing uploaded. Open source call recorder for Mac and Windows, verify the code yourself on GitHub.">
+<meta property="og:url" content="https://debrief.veeralspatel.com/local-transcription/">
+<meta property="og:image" content="https://debrief.veeralspatel.com/images/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../css/styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does Debrief send audio to a cloud AI service to transcribe it?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Transcription runs through an open source Whisper model on your own machine. Audio never leaves your device to get turned into text." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it still work without an internet connection?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Recording, transcription, and filing all happen locally, so turning off your wifi mid-call doesn't stop any of it working." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I verify this instead of taking your word for it?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The full source is on GitHub under the MIT license. Read the code, run it yourself, or watch the network requests it makes. There's nothing to trust blindly." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this different from tools that just say they care about privacy?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Local here is structural, not a policy. There's no server in the loop to make a promise about in the first place." }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="container-narrow" style="padding-top: var(--sp-5);">
+  <a href="../" class="link-slide" style="font-family: var(--mono); font-size: 13px;">← Debrief</a>
+</div>
+
+<main id="main">
+  <section>
+    <div class="container-narrow">
+      <div class="eyebrow" style="margin-bottom: var(--sp-4);">PRIVACY &amp; OPEN SOURCE</div>
+      <h1 class="priv-heading reveal in" style="font-size: var(--fs-h1);">Local isn't a marketing word here</h1>
+      <div class="priv-body reveal in">
+        <p>Debrief doesn't upload your calls anywhere to transcribe them. Recording, transcription, and filing all happen on your own machine, using an open source model, not a cloud API. Turn off your wifi mid-call and it keeps working, because it was never talking to anything but your own computer. The full source is on <a href="https://github.com/veeralspatel/debrief" class="link-slide" data-track="outbound_github_click">GitHub</a> if you want to verify that yourself instead of taking our word for it.</p>
+        <p>Most "privacy-focused" call tools mean their servers follow a privacy policy. Debrief means there's no server in the loop at all. The distinction matters: a policy is a promise someone could break or quietly change, a structural fact isn't. Your audio goes from your microphone, through a local, open source Whisper model, into a plain text file on your own disk. Nothing in that chain is capable of leaving your machine, not because it's configured not to, but because it's never sent anywhere in the first place.</p>
+      </div>
+
+      <div class="demo-block reveal in">
+        <div class="demo-wrap" id="demo-2">
+          <div class="demo-ctl"><button class="btn-ghost" data-replay aria-label="Replay demo: audio stays on your machine">Replay</button></div>
+          <div class="d2">
+            <div class="machine">
+              <div class="machine-lbl">YOUR MACHINE</div>
+              <div class="m-flow">
+                <div class="m-node" id="n1">audio</div>
+                <div class="m-arrow">→</div>
+                <div class="m-node" id="n2">whisper</div>
+                <div class="m-arrow">→</div>
+                <div class="m-node" id="n3">.md file</div>
+              </div>
+            </div>
+            <div class="barrier"><div class="barrier-line"></div><div class="blocked">nothing crosses</div></div>
+            <div class="cloud"><div class="cloud-box">their servers</div></div>
+          </div>
+          <div class="wifi-row">
+            <span>internet</span>
+            <div class="tog" id="tg" role="img" aria-label="wifi toggle"><div class="knob"></div></div>
+            <span id="wl">connected</span>
+            <span class="still" id="st">· still transcribing</span>
+          </div>
+        </div>
+        <p class="demo-caption">Audio moves through your machine only, mic to Whisper to a plain markdown file. It never crosses to a server, and cutting your wifi mid-call proves it: transcription keeps running because it was never depending on a connection.</p>
+      </div>
+
+      <h2 class="reveal in" style="margin-top: var(--sp-8); margin-bottom: var(--sp-5);">Straight answers on how this actually works</h2>
+      <div class="faq-list reveal in">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="lt-faq-1">
+            Does Debrief send audio to a cloud AI service to transcribe it?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="lt-faq-1"><div class="faq-a-inner"><p class="faq-a">No. Transcription runs through an open source Whisper model on your own machine. Audio never leaves your device to get turned into text.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="lt-faq-2">
+            Does it still work without an internet connection?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="lt-faq-2"><div class="faq-a-inner"><p class="faq-a">Yes. Recording, transcription, and filing all happen locally, so turning off your wifi mid-call doesn't stop any of it working, exactly like the demo above.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="lt-faq-3">
+            How do I verify this instead of taking your word for it?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="lt-faq-3"><div class="faq-a-inner"><p class="faq-a">The full source is on GitHub under the MIT license. Read the code, run it yourself, or watch the network requests it makes. There's nothing to trust blindly.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" aria-controls="lt-faq-4">
+            Is this different from tools that just say they care about privacy?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <div class="faq-a-wrap" id="lt-faq-4"><div class="faq-a-inner"><p class="faq-a">Yes. Local here is structural, not a policy. There's no server in the loop to make a promise about in the first place.</p></div></div>
+        </div>
+      </div>
+
+      <div class="reveal in" style="margin-top: var(--sp-8);">
+        <a class="btn-primary" href="../#waitlist" data-track="cta_click" data-location="local_transcription_page">Join the waitlist</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-links">
+      <a href="https://github.com/veeralspatel/debrief" data-track="outbound_github_click">GitHub ↗</a>
+      <a href="../privacy-policy/">Privacy Policy</a>
+    </div>
+    <p class="footer-fielder">Also building Fielder, tools for trades businesses, if that's relevant to you.</p>
+    <div class="footer-socials">
+      <a href="#" aria-label="Instagram">Instagram</a>
+      <a href="#" aria-label="TikTok">TikTok</a>
+    </div>
+  </div>
+</footer>
+
+<div class="cookie-banner" id="cookie-banner" hidden>
+  <div class="cookie-inner">
+    <p class="cookie-text">This site uses cookies for analytics and the waitlist signup.</p>
+    <div class="cookie-actions">
+      <button class="btn-ghost" id="cookie-reject">Reject</button>
+      <button class="btn-primary" id="cookie-accept">Accept</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

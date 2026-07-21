@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /privacy-policy/
+
+Sitemap: https://debrief.veeralspatel.com/sitemap.xml
