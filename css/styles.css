@@ -481,11 +481,8 @@ section { position: relative; padding: var(--section-pad) 0; }
 .fin-row.new { opacity: 0; transform: translateY(-6px); transition: opacity 450ms ease, transform 450ms ease; }
 .fin-row.new.in { opacity: 1; transform: none; }
 
-.tr-line { display: flex; gap: var(--sp-3); margin-bottom: var(--sp-3); }
-.tr-line:last-child { margin-bottom: 0; }
-.tr-who { font-family: var(--mono); font-size: 10px; color: var(--t4); width: 44px; flex-shrink: 0; padding-top: 2px; }
-.tr-who.you { color: var(--blue); }
-.tr-text { font-size: 13px; color: var(--t2); margin: 0; }
+.tr-text { font-size: 13px; color: var(--t2); margin: 0 0 var(--sp-3); }
+.tr-text:last-child { margin-bottom: 0; }
 
 /* offline beat reuses the exact toggle already established on the
    local-transcription page (`.tog`/`.knob`), not a new component */
