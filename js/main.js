@@ -603,10 +603,11 @@
     // between two dim/full-opacity states. Mobile keeps the plain stacked
     // list (same reasoning as the traveling pill bailing under 1024px).
     var useWheel = !reduceMotion && window.matchMedia('(min-width: 1024px)').matches;
-    var ROW_HEIGHT = 176;       // vertical spacing between wheel rows
+    var ROW_HEIGHT = 196;       // vertical spacing between wheel rows
     var WINDOW_ROWS = 3;        // prev / active / next
-    var SCROLL_PER_ITEM = 210;  // px of page scroll consumed advancing one item
+    var SCROLL_PER_ITEM = 240;  // px of page scroll consumed advancing one item
     var STICKY_TOP = 120;       // matches .sd-sticky-wrap's own sticky offset
+    var DWELL = 0.72;           // fraction of each item's range spent essentially still before it moves
 
     var wheelWindow = null;
     var itemEls = [];
@@ -687,25 +688,52 @@
       return;
     }
 
-    // Continuous wheel: distance-from-center drives a gentle-radius CSS 3D
-    // tilt (rotateX + a small translateZ pushback, large virtual radius so
-    // the curve stays subtle) plus an explicit scale/opacity falloff so the
-    // centered row reads as clearly dominant, not just barely brighter.
+    // Continuous wheel: distance-from-center drives a vertical slide, a
+    // gentle-radius CSS 3D tilt (rotateX + a small translateZ pushback,
+    // large virtual radius so the curve stays subtle) and an opacity
+    // falloff. No scale — every row renders at the same size, same as a
+    // real iOS picker wheel; the tilt alone gives the neighbors their
+    // "receding" read. Each item also dwells near-still for most of its
+    // scroll allotment (DWELL) before transitioning over the remainder,
+    // eased out, so it reads as one deliberate move per swipe rather than
+    // a continuous drift that's already underway the moment you arrive.
+    // The dwell curve shapes WHERE the target sits; a separate time-based
+    // lerp (not scroll-position-based) below shapes HOW the rendered wheel
+    // chases that target, so it glides and keeps coasting for a beat after
+    // scrolling stops instead of snapping frame-to-frame with raw scroll.
     function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-    function wheelLoop() {
+    function easeOutQuart(x) { return 1 - Math.pow(1 - x, 4); }
+    function applyDwell(p) {
+      var idx = Math.floor(p);
+      var frac = p - idx;
+      var eased = frac < DWELL ? 0 : easeOutQuart((frac - DWELL) / (1 - DWELL));
+      return idx + eased;
+    }
+    var renderedProgress = 0;
+    var lastFrameTime = null;
+    var SMOOTH_TAU = 140; // ms; higher = more lag/glide, lower = snappier
+    function wheelLoop(now) {
+      var dt = lastFrameTime == null ? 16 : clamp(now - lastFrameTime, 0, 64);
+      lastFrameTime = now;
+
       var rect = listEl.getBoundingClientRect();
       var scrollable = rect.height - (ROW_HEIGHT * WINDOW_ROWS);
       var t = scrollable > 0 ? clamp((STICKY_TOP - rect.top) / scrollable, 0, 1) : 0;
-      var progress = t * (ITEMS.length - 1);
+      var rawProgress = t * (ITEMS.length - 1);
+      var target = applyDwell(rawProgress);
+
+      var smoothing = 1 - Math.exp(-dt / SMOOTH_TAU);
+      renderedProgress += (target - renderedProgress) * smoothing;
+      if (Math.abs(target - renderedProgress) < 0.001) renderedProgress = target;
+      var progress = renderedProgress;
 
       itemEls.forEach(function (el, i) {
         var d = i - progress;
         var absD = Math.abs(d);
         var opacity = clamp(1 - absD * 0.85, 0, 1);
-        var scale = clamp(1 - absD * 0.42, 0.35, 1);
         var angle = clamp(d * 9, -34, 34);
         var depth = -Math.abs(angle) * 1.6;
-        el.style.transform = 'translateY(-50%) translateY(' + (d * ROW_HEIGHT) + 'px) rotateX(' + (-angle) + 'deg) translateZ(' + depth + 'px) scale(' + scale + ')';
+        el.style.transform = 'translateY(-50%) translateY(' + (d * ROW_HEIGHT) + 'px) rotateX(' + (-angle) + 'deg) translateZ(' + depth + 'px)';
         el.style.opacity = opacity;
         el.style.pointerEvents = absD < 0.5 ? 'auto' : 'none';
       });
