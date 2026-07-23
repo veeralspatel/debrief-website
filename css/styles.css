@@ -246,7 +246,7 @@ section { position: relative; padding: var(--section-pad) 0; }
 }
 .field-error.show { display: block; }
 .risk-reversal {
-  font-family: var(--mono); font-size: 11px; color: var(--t2); line-height: 1.7; max-width: 420px;
+  font-size: 12.5px; color: var(--t3); line-height: 1.6; max-width: 400px; margin-top: var(--sp-4);
 }
 
 /* ============================================================
@@ -699,7 +699,7 @@ section { position: relative; padding: var(--section-pad) 0; }
    consistency bug a design critique caught. Heading/copy get the same
    copy-max reading measure everything else uses, without re-centering the
    container itself. */
-.waitlist-inner h2, .waitlist-inner .waitlist-form, .waitlist-inner .risk-reversal { max-width: var(--copy-max); }
+.waitlist-inner h2, .waitlist-inner .waitlist-form { max-width: var(--copy-max); }
 .waitlist-form { display: flex; flex-direction: column; gap: var(--sp-4); align-items: flex-start; margin-top: var(--sp-6); }
 .ck-form-wrap { display: flex; flex-direction: column; gap: var(--sp-3); width: 100%; max-width: 340px; }
 @media (min-width: 480px) {
