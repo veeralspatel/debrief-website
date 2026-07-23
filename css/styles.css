@@ -44,6 +44,9 @@
 
   /* Section rhythm — mobile-first, widens per breakpoint below */
   --section-pad: var(--sp-8);
+  /* Card-to-card gap: the seam between two .section-sheet cards (not the
+     hero->first-card or last-card->footer edges, which keep --section-pad). */
+  --card-gap-pad: var(--sp-6);
   --copy-max: 560px;
   --copy-max-hero: 460px;
   --container-max: 600px;
@@ -63,6 +66,7 @@
 @media (min-width: 768px) {
   :root {
     --section-pad: 88px;
+    --card-gap-pad: var(--sp-7);
     --container-max: 700px;
     --container-pad: var(--sp-6);
     --fs-h1: 44px;
@@ -75,6 +79,7 @@
 @media (min-width: 1024px) {
   :root {
     --section-pad: var(--sp-9);
+    --card-gap-pad: 56px;
     --container-max: 1080px;
     --container-pad: var(--sp-7);
     --fs-h1: 52px;
@@ -86,6 +91,7 @@
 @media (min-width: 1440px) {
   :root {
     --section-pad: 148px;
+    --card-gap-pad: 64px;
     --container-max: 1280px;
     --container-pad: var(--sp-9);
     --fs-h1: 60px;
@@ -175,6 +181,13 @@ h3, .h3 {
   padding-right: var(--container-pad);
 }
 section { position: relative; padding: var(--section-pad) 0; }
+/* Condense the gap between consecutive cards: every card-wrapping section's
+   inward-facing edge switches to the tighter --card-gap-pad, while the
+   hero->first-card seam (#problem's top) and the last-card->footer edge
+   (#waitlist's bottom) keep --section-pad exactly as before. */
+#problem { padding-bottom: var(--card-gap-pad); }
+#filing, #transcription, #offline, #value-stack, #faq { padding-top: var(--card-gap-pad); padding-bottom: var(--card-gap-pad); }
+#waitlist { padding-top: var(--card-gap-pad); }
 .section-alt { background: var(--s1); }
 .copy-col { max-width: var(--copy-max); }
 .copy-col-hero { max-width: var(--copy-max-hero); }
