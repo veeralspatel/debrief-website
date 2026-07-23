@@ -51,7 +51,6 @@ images/                          favicon set + OG banner (generated from the loc
 - Nurture Email 3's cold-calling tip (ConvertKit side, not this repo, but tracked in Doc 07)
 - Privacy Policy page's contact email — currently a placeholder in `privacy-policy/index.html`
 - GA4 measurement ID — not wired in yet, needs a real property created in Veeral's account
-- ConvertKit form action URL / form ID — currently a placeholder, needs the real embed
 - Value stack's "$10 to $20/month" anchor number needs a real-figure check before launch (Doc 07)
 
 ## Hard rules
