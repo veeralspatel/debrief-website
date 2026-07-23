@@ -548,26 +548,9 @@ section { position: relative; padding: var(--section-pad) 0; }
 .sd-item:first-child { padding-top: 0; }
 .sd-item:last-child { border-bottom: none; }
 .sd-item.active { opacity: 1; }
-.sd-item h3 { font-size: 16px; margin-bottom: var(--sp-2); display: flex; align-items: center; gap: var(--sp-3); }
-.sd-item p { color: var(--t2); font-size: var(--fs-body-2); max-width: 50ch; }
-.sd-num { font-family: var(--mono); font-size: 11px; color: var(--t4); margin-bottom: var(--sp-2); }
-
-/* Picker-wheel mode (laptop+, motion allowed): .sd-list becomes a tall
-   scroll spacer; .sd-wheel-window is the sticky, fixed-height viewport
-   showing 3 rows (prev/active/next) of a gentle-radius CSS 3D cylinder.
-   Per-row transform/opacity is written inline every frame by
-   initValueStackSticky's rAF loop, not by these rules — these just set
-   the resting geometry and the larger at-rest (center-row) type scale. */
-.sd-list.sd-wheel-spacer { position: relative; }
-.sd-wheel-window { position: sticky; overflow: hidden; perspective: 1400px; width: 100%; }
-.sd-wheel-window .sd-item {
-  position: absolute; top: 50%; left: 0; width: 100%;
-  padding: 0; border-bottom: none; opacity: 0;
-  transform-style: preserve-3d; will-change: transform, opacity;
-}
-.sd-wheel-window .sd-item h3 { font-size: 30px; line-height: 1.2; }
-.sd-wheel-window .sd-item p { font-size: 16px; max-width: 46ch; }
-.sd-wheel-window .sd-item .sd-num { font-size: 12px; }
+.sd-item h3 { font-size: 30px; line-height: 1.2; margin-bottom: var(--sp-2); display: flex; align-items: center; gap: var(--sp-3); }
+.sd-item p { color: var(--t2); font-size: 16px; max-width: 46ch; }
+.sd-num { font-family: var(--mono); font-size: 12px; color: var(--t4); margin-bottom: var(--sp-2); }
 .sd-sticky-wrap { align-self: center; width: 100%; max-width: 320px; }
 .sd-icon-wrap { width: 40px; height: 40px; border-radius: 11px; background: var(--bg); border: 1px solid var(--bd); display: flex; align-items: center; justify-content: center; margin: var(--sp-5) var(--sp-5) 0; }
 .sd-icon { width: 20px; height: 20px; stroke: var(--blue); stroke-width: 1.8; fill: none; }
