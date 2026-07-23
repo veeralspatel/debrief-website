@@ -347,6 +347,64 @@
   }
 
   /* ============================================================
+     Transcript beat — lines type out like a live dictation feed
+     instead of appearing as static copy, reinforcing "generated the
+     moment the call ends" without implying anything about speaker
+     labels (deliberately removed per Veeral — see tr-text markup).
+     ============================================================ */
+  function initTranscriptBeat() {
+    var root = document.getElementById('transcriptBeat');
+    if (!root) return;
+    var lines = Array.prototype.slice.call(root.querySelectorAll('.tr-text'));
+    if (!lines.length) return;
+    var fullText = lines.map(function (el) { return el.textContent; });
+    var timers = [];
+    var intervals = [];
+
+    function showFinal() {
+      lines.forEach(function (el, i) { el.textContent = fullText[i]; });
+    }
+
+    function typeLine(i, onDone) {
+      var el = lines[i];
+      var text = fullText[i];
+      var cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      el.textContent = '';
+      el.appendChild(cursor);
+      var pos = 0;
+      var iv = setInterval(function () {
+        pos++;
+        el.textContent = text.slice(0, pos);
+        el.appendChild(cursor);
+        if (pos >= text.length) {
+          clearInterval(iv);
+          cursor.remove();
+          onDone();
+        }
+      }, 24);
+      intervals.push(iv);
+    }
+
+    function run() {
+      intervals.forEach(clearInterval); intervals = [];
+      timers.forEach(clearTimeout); timers = [];
+      if (reduceMotion) { showFinal(); return; }
+      lines.forEach(function (el) { el.textContent = ''; });
+      (function next(i) {
+        if (i >= lines.length) return;
+        timers.push(setTimeout(function () { typeLine(i, function () { next(i + 1); }); }, 350));
+      })(0);
+    }
+
+    if (reduceMotion || !('IntersectionObserver' in window)) { showFinal(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) { run(); io.unobserve(entry.target); } });
+    }, { threshold: 0.4 });
+    io.observe(root);
+  }
+
+  /* ============================================================
      Offline beat — Wi-Fi toggle switches off, waveform keeps going.
      Reuses the exact `.tog`/`.knob` toggle already established on the
      local-transcription page, not a new component.
@@ -679,6 +737,7 @@
     initHeroAnimation();
     initMechanismPanel();
     initFilingBeat();
+    initTranscriptBeat();
     initOfflineBeat();
     initTravelingPill();
     initFaq();
