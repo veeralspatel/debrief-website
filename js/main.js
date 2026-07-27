@@ -660,7 +660,7 @@
     ITEMS.forEach(function (it, i) {
       var item = document.createElement('div');
       item.className = 'sd-item'; item.dataset.index = i;
-      item.innerHTML = '<div class="sd-num">0' + (i + 1) + ' / 0' + ITEMS.length + '</div><h3>' + it.title + '</h3><p>' + it.desc + '</p>';
+      item.innerHTML = '<div class="sd-num">0' + (i + 1) + ' / 0' + ITEMS.length + '</div><h3><span class="sd-item-icon" aria-hidden="true"><svg class="sd-icon" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[it.icon] + '</svg></span>' + it.title + '</h3><p>' + it.desc + '</p>';
       listEl.appendChild(item);
       itemEls.push(item);
       var dot = document.createElement('div');

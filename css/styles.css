@@ -547,6 +547,16 @@ section { position: relative; padding: var(--section-pad) 0; }
 .sd-item.active { opacity: 1; }
 .sd-item h3 { font-size: 30px; line-height: 1.2; margin-bottom: var(--sp-2); display: flex; align-items: center; gap: var(--sp-3); }
 .sd-item p { color: var(--t2); font-size: 16px; max-width: 46ch; }
+/* Below 1024px the sticky mockup panel can't follow each item as you scroll past it
+   (position:sticky only kicks in at the same breakpoint the row goes side-by-side), so each
+   item carries its own small icon here instead of relying on the panel for that context. */
+.sd-item-icon {
+  display: none; width: 32px; height: 32px; border-radius: 9px;
+  background: var(--bg); border: 1px solid var(--bd);
+  align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sd-item-icon .sd-icon { width: 16px; height: 16px; }
+@media (max-width: 1023px) { .sd-item-icon { display: flex; } }
 .sd-num { font-family: var(--mono); font-size: 12px; color: var(--t4); margin-bottom: var(--sp-2); }
 .sd-sticky-wrap { align-self: center; width: 100%; max-width: 320px; }
 .sd-icon-wrap { width: 40px; height: 40px; border-radius: 11px; background: var(--bg); border: 1px solid var(--bd); display: flex; align-items: center; justify-content: center; margin: var(--sp-5) var(--sp-5) 0; }
