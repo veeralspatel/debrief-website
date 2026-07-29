@@ -535,6 +535,44 @@
   }
 
   /* ============================================================
+     Demo 2 — audio stays on your machine (local-transcription page).
+     Ported from docs/demos.html's runD2. Flow nodes light up left to
+     right (audio -> whisper -> .md file), then wifi flips off and
+     "still transcribing" confirms it, then the flow cycles once more
+     to show it kept working after the disconnect.
+     ============================================================ */
+  function initDemo2() {
+    var root = document.getElementById('demo-2');
+    if (!root) return;
+    var timers = [];
+
+    function run() {
+      timers.forEach(clearTimeout); timers = [];
+      var n = [document.getElementById('n1'), document.getElementById('n2'), document.getElementById('n3')];
+      var tg = document.getElementById('tg'), wl = document.getElementById('wl'), st = document.getElementById('st');
+      n.forEach(function (x) { x.classList.remove('act'); });
+      tg.classList.remove('off'); wl.textContent = 'connected'; st.classList.remove('in');
+
+      if (reduceMotion) {
+        n.forEach(function (x) { x.classList.add('act'); });
+        tg.classList.add('off'); wl.textContent = 'off'; st.classList.add('in');
+        return;
+      }
+      n.forEach(function (x, i) { timers.push(setTimeout(function () { x.classList.add('act'); }, 600 + i * 700)); });
+      timers.push(setTimeout(function () { tg.classList.add('off'); wl.textContent = 'off'; }, 3000));
+      timers.push(setTimeout(function () { st.classList.add('in'); }, 3600));
+      timers.push(setTimeout(function () {
+        n.forEach(function (x) { x.classList.remove('act'); });
+        n.forEach(function (x, i) { timers.push(setTimeout(function () { x.classList.add('act'); }, i * 700)); });
+      }, 4200));
+    }
+
+    var replay = root.querySelector('[data-replay]');
+    if (replay) replay.addEventListener('click', run);
+    autoplayOnce(root, run);
+  }
+
+  /* ============================================================
      Demo 4 — Auto-detect. Ported from docs/demos-2.html.
      ============================================================ */
   function initDemo4() {
@@ -751,6 +789,7 @@
     initCookieBanner();
     initClickTracking();
     initWaitlistForm();
+    initDemo2();
     initDemo4();
     initDemo3();
     initValueStackSticky();
