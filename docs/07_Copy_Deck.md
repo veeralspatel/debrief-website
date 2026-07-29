@@ -200,7 +200,7 @@ the site you're reading right now.
 
 What this site collects
 
-Your email address, if you join the waitlist. Handled by ConvertKit, used only to send
+Your email address, if you join the waitlist. Handled by Kit, used only to send
 the emails described when you signed up. Unsubscribe anytime, one click.
 
 Basic analytics through Google Analytics: pages visited, rough location, device type.
@@ -219,8 +219,7 @@ the link in the footer.
 
 Questions
 
-[Real contact email needed here, not fabricated, same no-invention rule as Email 3's
-tip. Placeholder until Veeral supplies one.]
+hello@veeralspatel.com
 ```
 
 **Meta:** noindex is fine for this page, it doesn't need to rank, it needs to exist and be
@@ -264,13 +263,25 @@ same wall.
 Veeral
 ```
 
-**Email 3, day 5-7. Subject: One thing that actually moved my close rate**
+**Email 3, day 5-7. Subject: What I do 5 minutes before every cold call session**
 ```
-No pitch in this one, just something that's worked for me.
+No pitch in this one. Just something that's actually worked for me.
 
-[Specific, real tip drawn from actual reps, e.g. closing Savio or working the
-122-lead list, written once real material is on hand. Placeholder, do not
-invent a fabricated anecdote to fill this, see Open Items below.]
+Before I start a cold calling session, I sit down and think about
+why I'm actually doing this. Not the task in front of me, the
+actual reason. What result I want and what it's going to do for my
+life if I get it. I remind myself that if I want that result, this
+is the action that gets me there. Picking up the phone stops being
+the annoying part and starts being the only way to the thing I
+actually want.
+
+It sounds simple because it is. But most people skip this and
+wonder why they dial the first ten numbers half checked out. You
+can have the best script in the world and still bomb the call
+because you sat down for the wrong reason, or no reason at all.
+
+Give yourself thirty seconds before your next session. Remind
+yourself why you're doing this. Then dial.
 
 Veeral
 ```
@@ -330,10 +341,11 @@ Veeral
 - **Unsigned-installer FAQ moved to Phase 2** (tracked in Doc 09): the question and its answer
   assumed a `/download` page that doesn't exist in Phase 1, and the objection itself is moot
   before anyone can install anything. Add it back once Phase 2 introduces the download page.
-- Email 3's specific tip is a placeholder, needs a real, specific detail from Veeral's own
-  calls, not a fabricated anecdote (standing no-fabrication rule applies to nurture copy too).
-- **New this session:** the Privacy Policy page's "Questions" line needs a real contact email,
-  not fabricated, same rule as Email 3. Placeholder until supplied.
+- ~~Email 3's specific tip is a placeholder~~ — **locked 2026-07-29**: real tip supplied
+  (pre-session mindset/reason-why ritual before cold calling), written into the email above.
+- ~~The Privacy Policy page's "Questions" line needs a real contact email~~ — **locked**:
+  `hello@veeralspatel.com`, live on the actual site since the 2026-07-27 pre-launch session,
+  synced into this doc 2026-07-29.
 - ~~Fielder self-select line in the footer, confirm exact wording before build~~ — **locked this
   session**: wording confirmed as drafted, no change.
 - Final copy pass against `copy-editing`/`copychief`-equivalent review before lock, matching the

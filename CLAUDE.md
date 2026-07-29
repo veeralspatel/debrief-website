@@ -48,10 +48,13 @@ images/                          favicon set + OG banner (generated from the loc
 
 ## Known open items (do not fabricate, per standing rule)
 
-- Nurture Email 3's cold-calling tip (ConvertKit side, not this repo, but tracked in Doc 07)
-- Privacy Policy page's contact email — currently a placeholder in `privacy-policy/index.html`
-- GA4 measurement ID — not wired in yet, needs a real property created in Veeral's account
-- Value stack's "$10 to $20/month" anchor number needs a real-figure check before launch (Doc 07)
+All previously-tracked items here are resolved as of 2026-07-29: Nurture Email 3's cold-calling
+tip is written (Doc 07), the Privacy Policy contact email is real (`hello@veeralspatel.com`), GA4
+is wired (`G-CTZ8ZYQSD7`), and the "$10 to $20/month" anchor was verified against current
+Otter.ai/Fireflies pricing. Next open items: HTTPS cert on the custom domain still shows
+`https_enforced: false` per `gh api repos/veeralspatel/debrief-website/pages` (should self-resolve,
+just check it), and whether Veeral wants the 5-email sequence actually built inside Kit's
+automation UI (offered, not yet answered).
 
 ## Hard rules
 

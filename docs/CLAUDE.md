@@ -38,17 +38,14 @@ Every doc has inline **"locked this session"** / **"corrected this session"** an
 what the 2026-07-21 audit changed and why — read those in place rather than assuming a doc's
 original prose is still accurate on first glance, several sections were corrected in-line.
 
-## Two things still need real input before those specific pieces are finished
+## Both no-fabrication placeholders are now resolved (as of 2026-07-29)
 
-Check whether Veeral has since supplied these before treating them as blocking:
+1. **Nurture Email 3** (`07_Copy_Deck.md`) — real tip supplied and written in: a pre-session
+   mindset/reason-why ritual before cold calling.
+2. **Privacy Policy contact email** (`07_Copy_Deck.md`) — `hello@veeralspatel.com`, live on the
+   real site since 2026-07-27.
 
-1. **Nurture Email 3** (`07_Copy_Deck.md`) needs a real, specific cold-calling/sales tip from his
-   own experience. Standing no-fabrication rule — do not invent one, leave the placeholder.
-2. **Privacy Policy contact email** (`07_Copy_Deck.md`, new Privacy Policy section) needs a real
-   address. Same rule — do not invent one.
-
-Everything else in the doc set is locked. If either of these is still unresolved when reaching the
-relevant build phase, stop and ask rather than filling in a placeholder value.
+The doc set is fully locked, nothing left requiring Veeral's input to avoid fabrication.
 
 ## Skills to use during the build
 
