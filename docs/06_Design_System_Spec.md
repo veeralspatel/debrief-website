@@ -35,10 +35,28 @@ green toggle-on, `#1C1C1E`/`#F2F2F7` backgrounds — none of that made it in her
   (demo chrome labels, non-essential timestamps) where failing contrast is acceptable because
   the text carries no meaning on its own. No longer used for risk-reversal copy, that moved to
   Text 2, since 2.17:1 fails even the relaxed large-text threshold on real promise copy. |
-| Blue | `#0A84FF` | All CTAs, links, focus rings. The only click color on the site. |
-| Blue hover | `#339CFF` | CTA hover only |
+| Blue | `#0A84FF` | Links, icon strokes, focus rings, and anywhere else it's foreground color on the dark bg (5.4:1, passes). The only click color on the site. |
+| Blue hover | `#339CFF` | Non-button hover only (icon/link hover) |
+| Blue button | `#0870D8` | **Added this session (impeccable audit, 2026-07-29):** background color for `.btn-primary` and `.skip-link` specifically. Plain `#0A84FF` under white button text only reaches 3.6:1, failing WCAG AA. Split into its own token rather than darkening `#0A84FF` everywhere, since that token is also used as *foreground* text/link color elsewhere and already passes there (5.4:1); darkening it globally would have fixed the button and broken the links. |
+| Blue button hover | `#0874E0` | Hover state for the above, still ≥4.5:1 |
 | Red | `#FF3B30` | Recording motif only. Never on a clickable element. |
 | Green | `#30D158` | Checkmarks, success states, "still transcribing" proof text |
+
+**Broader contrast pass, 2026-07-29 (impeccable audit):** the "locked this session" fix noted
+above for risk-reversal copy (moved Text 3 → Text 2) had been written into this doc but never
+actually shipped in `css/styles.css` — the CSS still read Text 3 until this session caught the
+drift via a live-DOM contrast scan, not a static read of the doc. Same scan found roughly a dozen
+more elements still on Text 3 in violation of this section's own stated rule (real body-size,
+meaningful-content text, not large-text or decorative): every `.eyebrow` sitewide, form field
+placeholders, the value-stack's live description text (`.sd-desc`), the AI-feedback demo body
+copy (`.fb-b`), the auto-filing micro-loop's file tree rows (`.tr`), the Record-tab mockup's
+recent-file title/meta (`.rt-recent-title`/`.rt-recent-meta`) and control caption, the offline
+beat's status subtext (`.off-sub`), the local-transcription page's mechanism-diagram node labels
+(`.m-node`) and Wi-Fi row, and the footer's Fielder line. All moved to Text 2. Icon fill/stroke
+uses of Text 3 (the GitHub-icon eyebrow mark, the FAQ chevron, `.fin-icon`) were left alone,
+those meet WCAG's separate 3:1 non-text-contrast threshold already. Also removed `.footer-socials`
+from the CSS entirely, dead code left over from the dead Instagram/TikTok links removed in an
+earlier session.
 
 ---
 
