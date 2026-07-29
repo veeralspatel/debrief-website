@@ -318,11 +318,19 @@ section { position: relative; padding: var(--section-pad) 0; }
 }
 .hero-copy { display: flex; flex-direction: column; gap: var(--sp-5); }
 .hero-copy .eyebrow { display: flex; align-items: center; gap: var(--sp-2); }
-.rec-dot {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--red);
-  animation: breathe 1.8s ease-in-out infinite;
+/* Hero eyebrow: real GitHub mark linking to the actual repo (a verifiable fact,
+   not a decorative status pill), sized up from the site's standard 11px eyebrow
+   since it's the very first thing in the hero. */
+.hero-eyebrow { font-size: 14px; }
+.hero-eyebrow a {
+  display: flex; align-items: center; gap: var(--sp-2);
+  color: inherit; text-decoration: none;
 }
-@keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.hero-eyebrow .gh-icon { width: 15px; height: 15px; fill: var(--t3); flex-shrink: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .hero-eyebrow a:hover { color: var(--t2); }
+  .hero-eyebrow a:hover .gh-icon { fill: var(--t2); }
+}
 .hero-copy h1 { color: var(--t); }
 .hero-copy .lead { color: var(--t2); }
 .hero-actions { display: flex; flex-direction: column; gap: var(--sp-3); align-items: flex-start; }
