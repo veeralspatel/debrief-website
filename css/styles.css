@@ -25,6 +25,13 @@
   --t4: #48484A;
   --blue: #0A84FF;
   --blue-h: #339CFF;
+  /* Darker than --blue specifically for white-text-on-blue backgrounds (buttons,
+     skip link): #0A84FF only reaches 3.6:1 with white text, failing WCAG AA's
+     4.5:1 floor. --blue stays untouched since it also serves as link/icon
+     foreground color on the dark bg, where it already passes at 5.4:1 and
+     darkening it there would newly fail instead. */
+  --blue-btn: #0870D8;
+  --blue-btn-h: #0874E0;
   --red: #FF3B30;
   --green: #30D158;
 
@@ -201,12 +208,12 @@ section { position: relative; padding: var(--section-pad) 0; }
   display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--sans); font-size: 15px; font-weight: 600;
   padding: 14px 28px; border-radius: 8px;
-  background: var(--blue); color: #fff;
+  background: var(--blue-btn); color: #fff;
   transition: background 150ms ease, transform 100ms ease;
   min-height: 48px;
 }
 @media (hover: hover) and (pointer: fine) {
-  .btn-primary:hover { background: var(--blue-h); }
+  .btn-primary:hover { background: var(--blue-btn-h); }
 }
 .btn-primary:active { transform: scale(0.985); }
 .btn-primary.is-success {
@@ -287,7 +294,7 @@ section { position: relative; padding: var(--section-pad) 0; }
    ============================================================ */
 .skip-link {
   position: absolute; left: var(--sp-4); top: -60px;
-  background: var(--blue); color: #fff; padding: 10px 16px; border-radius: 6px;
+  background: var(--blue-btn); color: #fff; padding: 10px 16px; border-radius: 6px;
   font-size: 14px; font-weight: 600; z-index: 200; transition: top 150ms ease;
 }
 .skip-link:focus { top: var(--sp-4); }

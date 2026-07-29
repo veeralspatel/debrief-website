@@ -175,7 +175,11 @@
     }
     setState('idle');
 
-    if (reduceMotion || !('IntersectionObserver' in window)) { setState('recording'); return; }
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      beats.forEach(function (el) { el.classList.add('active'); });
+      setState('recording');
+      return;
+    }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -713,7 +717,10 @@
     }
     setActive(0);
 
-    if (reduceMotion || !('IntersectionObserver' in window)) return;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      itemEls.forEach(function (el) { el.classList.add('active'); });
+      return;
+    }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) { if (entry.isIntersecting) setActive(Number(entry.target.dataset.index)); });
     }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
