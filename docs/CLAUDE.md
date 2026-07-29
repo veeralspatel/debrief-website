@@ -42,8 +42,8 @@ original prose is still accurate on first glance, several sections were correcte
 
 1. **Nurture Email 3** (`07_Copy_Deck.md`) — real tip supplied and written in: a pre-session
    mindset/reason-why ritual before cold calling.
-2. **Privacy Policy contact email** (`07_Copy_Deck.md`) — `hello@veeralspatel.com`, live on the
-   real site since 2026-07-27.
+2. **Privacy Policy contact email** (`07_Copy_Deck.md`) — `veeralpatel.business@gmail.com` as of
+   2026-07-29 (previously `hello@veeralspatel.com`, live since 2026-07-27).
 
 The doc set is fully locked, nothing left requiring Veeral's input to avoid fabrication.
 

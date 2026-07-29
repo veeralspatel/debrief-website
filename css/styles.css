@@ -384,7 +384,10 @@ section { position: relative; padding: var(--section-pad) 0; }
    component, two different jobs — never the same DOM node.
    ============================================================ */
 .rec-pill {
-  position: absolute; left: 75%; transform: translateX(-50%);
+  /* Centered on the 75% playhead when there's room; below ~468px-wide containers
+     that centering would push the pill's right edge past the container (clipped
+     by .hero's overflow:clip), so clamp to the container's right edge instead. */
+  position: absolute; left: max(0px, min(calc(75% - 117px), calc(100% - 234px)));
   display: inline-flex; align-items: center; gap: var(--sp-3);
   background: var(--s2); border: 1px solid var(--bdh); border-radius: 26px;
   padding: 7px 9px 7px 7px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);

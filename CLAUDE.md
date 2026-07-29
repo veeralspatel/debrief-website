@@ -49,7 +49,8 @@ images/                          favicon set + OG banner (generated from the loc
 ## Known open items (do not fabricate, per standing rule)
 
 All previously-tracked items here are resolved as of 2026-07-29: Nurture Email 3's cold-calling
-tip is written (Doc 07), the Privacy Policy contact email is real (`hello@veeralspatel.com`), GA4
+tip is written (Doc 07), the Privacy Policy contact email is real (`veeralpatel.business@gmail.com`,
+changed same-day from `hello@veeralspatel.com` per direct instruction), GA4
 is wired (`G-CTZ8ZYQSD7`), and the "$10 to $20/month" anchor was verified against current
 Otter.ai/Fireflies pricing. Next open items: HTTPS cert on the custom domain still shows
 `https_enforced: false` per `gh api repos/veeralspatel/debrief-website/pages` (should self-resolve,

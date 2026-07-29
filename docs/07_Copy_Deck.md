@@ -219,7 +219,7 @@ the link in the footer.
 
 Questions
 
-hello@veeralspatel.com
+veeralpatel.business@gmail.com
 ```
 
 **Meta:** noindex is fine for this page, it doesn't need to rank, it needs to exist and be
@@ -344,8 +344,9 @@ Veeral
 - ~~Email 3's specific tip is a placeholder~~ — **locked 2026-07-29**: real tip supplied
   (pre-session mindset/reason-why ritual before cold calling), written into the email above.
 - ~~The Privacy Policy page's "Questions" line needs a real contact email~~ — **locked**:
-  `hello@veeralspatel.com`, live on the actual site since the 2026-07-27 pre-launch session,
-  synced into this doc 2026-07-29.
+  `hello@veeralspatel.com` was live on the actual site since the 2026-07-27 pre-launch session;
+  **changed 2026-07-29** to `veeralpatel.business@gmail.com` per direct instruction to use that
+  address for customer contact across the site.
 - ~~Fielder self-select line in the footer, confirm exact wording before build~~ — **locked this
   session**: wording confirmed as drafted, no change.
 - Final copy pass against `copy-editing`/`copychief`-equivalent review before lock, matching the
